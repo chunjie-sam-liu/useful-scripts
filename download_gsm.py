@@ -12,7 +12,7 @@ import os,sys
 import urllib
 import re
 from bs4 import BeautifulSoup as bs
-
+#download javascript hiden expression data from GEO
 
 def geturl(gsm):
 	url = "http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=" + gsm
