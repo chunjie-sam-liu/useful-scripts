@@ -113,3 +113,10 @@ ls
 ll
 git 
 git add 
+git add .
+git status
+git push 
+git commit -m "add miRNA2target script and data"
+git push -u origin master
+git status
+vim README.md 
