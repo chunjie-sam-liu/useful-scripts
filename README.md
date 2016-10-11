@@ -7,3 +7,6 @@ miRNA2target.dict.picke and target2miRNA.dict.pickle are the comprehensive miRNA
 ##Add `get_sequence_by_mir_name.py`
 Use Bio.SeqIO to extract miRNA sequence from mature.fa downloaded from miRBase.  
 It's stupid that it doesn't use regular expression but extact to match miRNA ID. The result file will named `input_miRNA_ID_list.fasta`.
+
+##Add `findMotifByHand.py`
+Find motif by hand.
