@@ -10,3 +10,6 @@ It's stupid that it doesn't use regular expression but extact to match miRNA ID.
 
 ##Add `findMotifByHand.py`
 Find motif by hand.
+
+##Add `Han Server`
+New server address
