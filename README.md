@@ -13,3 +13,6 @@ Find motif by hand.
 
 ##Add `Han Server`
 New server address
+
+##Add `sortChromosomeAndPosition.py`
+Sort human vcf, bed, gff, gtf files in chromsome order.
