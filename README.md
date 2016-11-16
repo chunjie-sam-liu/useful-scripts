@@ -16,3 +16,6 @@ New server address
 
 ##Add `sortChromosomeAndPosition.py`
 Sort human vcf, bed, gff, gtf files in chromsome order.
+
+## Add `mapFileUUID2submitterID.py`
+Map GDC data uuid to submitter ID through the GDC-API. Input file is manifest downloaded from GDC-Portal
