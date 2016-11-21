@@ -19,3 +19,7 @@ Sort human vcf, bed, gff, gtf files in chromsome order.
 
 ## Add `mapFileUUID2submitterID.py`
 Map GDC data uuid to submitter ID through the GDC-API. Input file is manifest downloaded from GDC-Portal
+
+## Add `gdc_download.sh`
+Download gdc data in 20 parallel, and check md5.
+The gdc token is not provided. You should speciy the gdc tokens.

@@ -120,3 +120,61 @@ git commit -m "add miRNA2target script and data"
 git push -u origin master
 git status
 vim README.md 
+ls
+l
+vim README.md 
+git add README.md 
+git status
+git commit -m "new server"
+git config --global "chunjie-sam-liu@foxmail.com"
+ls
+cd
+ls
+ll
+git status
+git commit -m "add Leng server ssh key"
+git push origin master
+l
+cd ../
+l
+cp /home/cliu18/liucj/scripts/sortChromosomeAndPosition.py .
+l
+vim sortChromosomeAndPosition.py 
+python sortChromosomeAndPosition.py 
+l
+rm sortChromosomeAndPosition.py 
+l
+python /home/cliu18/liucj/scripts/sortChromosomeAndPosition.py
+cp /home/cliu18/liucj/scripts/sortChromosomeAndPosition.py .
+l
+git add sortChromosomeAndPosition.py 
+git status
+git add README.md 
+ls
+git status
+git commit -m "sortChromosomeAndPosition.py"
+git push origin master
+ls
+cd ../
+ls
+cd ../
+l
+cp /home/cliu18/liucj/practices/python3.5/gdc-api/test_real_gdc_manifest/mapFileUUID2submitterID.py .
+git status
+git add mapFileUUID2submitterID.py 
+git status
+git add *
+git status
+git commit -m "add mapFileUUID2submitterID.py"
+git push origin master
+l
+cd 
+ls
+cp /home/cliu18/liucj/scripts/gdc_download.sh .
+l
+vim gdc_download.sh 
+git status
+git add 
+git add .
+git statu
+git status
