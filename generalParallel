@@ -1,0 +1,74 @@
+#########################################################################
+# File Name: parallel.sh
+# Author: C.J. Liu
+# Mail: samliu@hust.edu.cn
+# Created Time: Tue 06 Dec 2016 04:39:49 PM CST
+#########################################################################
+#!/bin/bash
+
+params=$#
+scripts=$1
+
+# Set default threads as 20
+threads=${2:-20}
+
+echo "Notice: Your did parallel in $threads threads."
+echo ""
+
+function usage {
+	Description="Notice: The script aimed at running shell command in general parallel."
+	Usage="Uage:	generalParallel shell_scripts.sh parallel_number(default:20)"
+	ErrorNo="Error:	Number of arguments must be 1 or 2"
+	ErrorScript="Error:	suffix of script file must be sh."
+	if [ "$params" -lt 1 -o "$params" -gt 2 ]; then
+		echo $ErrorNo
+		echo $Description
+		echo $Usage
+		exit 1
+	fi
+	if [ "${scripts#*.}" != "sh" ]; then
+		echo $ErrorScript
+		echo $Description
+		echo $Usage
+		exit 1
+	fi
+	if [ $threads -gt 20 ]; then
+		echo "Warnings: Your THREADS is $threads"
+		echo "Warnings: Be careful! Your THREADS EXCEED 20!!!"
+	fi
+	
+
+}
+
+# Usage
+usage
+
+# Make fifo file
+pipe='/tmp/$$.fifo'
+mkfifo $pipe
+exec 6<>$pipe
+rm -rf $pipe
+
+[[ $threads -gt 20 ]] && echo "Warnings: Your THREADS is $threads" && echo "Warnings: Be careful! Your THREADS EXCEED 20!!!"
+
+for (( i=0; i<$threads; i++ ))
+do
+	echo ""
+done >&6
+
+cat $scripts | while read cmd
+do
+	read -u6
+	{
+		cmd=${cmd%%&}
+		echo "Notice - Your are running $cmd"
+		eval $cmd
+		echo "Success - $cmd was done!!!"
+		echo "" >&6
+	}&
+done
+wait 
+exec 6>&-
+
+echo "Success: The whole process is done!!!"
+
