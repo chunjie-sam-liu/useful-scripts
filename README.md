@@ -23,3 +23,6 @@ Map GDC data uuid to submitter ID through the GDC-API. Input file is manifest do
 ## Add `gdc_download.sh`
 Download gdc data in 20 parallel, and check md5.
 The gdc token is not provided. You should speciy the gdc tokens.
+
+## Add `generalParallel`
+Simple script for running scripts in parallel, The input file is your bash repeative commands, default parallel is 20.  
