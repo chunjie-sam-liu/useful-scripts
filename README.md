@@ -25,4 +25,7 @@ Download gdc data in 20 parallel, and check md5.
 The gdc token is not provided. You should speciy the gdc tokens.
 
 ## Add `generalParallel`
-Simple script for running scripts in parallel, The input file is your bash repeative commands, default parallel is 20.  
+Simple script for running scripts in parallel, The input file is your bash repeative commands, default parallel is 20. 
+
+## Add `extractOriginalBam2RegionalBam2.sh` 
+It's used for extract bam based on the bed by samtools. And, also it's a simple tamplate for handling many bam files in parallel.
