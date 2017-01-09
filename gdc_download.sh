@@ -11,7 +11,7 @@
 #open a fifo file
 
 # Update token regularly
-token="/tokens_path/your_token_.txt"
+token="/extraspace/TCGA/WXS_RAW/tokens/gdc-user-token.txt"
 
 [[ -f "$token" ]] || echo "Need gdc token or update token"
 
@@ -72,17 +72,16 @@ done
 wait
 exec 6>&-
 
-# md5sum check download files.
+#md5sum check download files.
 Root=$PWD
 
-#[[ -d ${Root}/md5check ]] && echo "${Root}/md5check already exists" || mkdir -p ${Root}/md5check
+[[ -d ${Root}/md5check ]] && echo "${Root}/md5check already exists" || mkdir -p ${Root}/md5check
 
-#ln -s ${Root}/*/*bam ${Root}/md5check/.
-#awk '{print $3,$2}' $manifest > ${Root}/md5check/md5checklist.txt
+ln -s ${Root}/*/*bam ${Root}/md5check/.
+awk '{print $3,$2}' $manifest > ${Root}/md5check/md5checklist.txt
 
-#cd ${Root}/md5check/
-#md5sum -c ${Root}/md5check/md5checklist.txt > ${Root}/md5check/md5check.result
-
+cd ${Root}/md5check/
+cat ${Root}/md5check/md5checklist.txt | parallel --pipe -N50 md5sum -c > ${Root}/md5check/md5checklist.txt.result &
 exit 0
 
 
