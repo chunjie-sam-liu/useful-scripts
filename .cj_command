@@ -1,0 +1,30 @@
+ls
+ll
+ls -al
+git status
+git 
+ll
+cd
+ls
+l
+ll
+cd ../
+ls
+ll
+cd ../
+ls
+ll
+cd ./
+l
+cd ../
+ls
+ll
+cd ../
+ls
+ll
+les sortChromosomeAndPosition.py
+ls
+cd ../
+cmd="git add -A; git commit -m 'backup Leng server 1 to GitHub'; git push origin master"
+cmd
+echo $cmd
