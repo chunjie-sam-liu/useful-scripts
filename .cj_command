@@ -28,3 +28,5 @@ cd ../
 cmd="git add -A; git commit -m 'backup Leng server 1 to GitHub'; git push origin master"
 cmd
 echo $cmd
+eval ${cmd}
+cd ../
