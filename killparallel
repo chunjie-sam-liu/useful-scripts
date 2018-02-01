@@ -1,0 +1,14 @@
+#########################################################################
+# File Name: killparallel.sh
+# Author: C.J. Liu
+# Mail: chunjie.sam.liu@gmail.com
+# Created Time: Thu 19 Jan 2017 04:53:24 PM CST
+#########################################################################
+#!/bin/bash
+
+[ "$#" -eq 0 ] && echo "Error: Input process to kill" && echo "Example: killparallel gdc-client " && exit 1
+name=$1
+cmd="ps xf |grep -iE \"${name}\"|grep -v  grep |awk '{print \$1}'|parallel kill -9"
+echo $cmd
+eval $cmd
+

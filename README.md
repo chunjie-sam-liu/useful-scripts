@@ -29,3 +29,6 @@ Simple script for running scripts in parallel, The input file is your bash repea
 
 ## Add `extractOriginalBam2RegionalBam2.sh` 
 It's used for extract bam based on the bed by samtools. And, also it's a simple tamplate for handling many bam files in parallel.
+
+## Add `killparallel`
+Kill process which contains "*"
