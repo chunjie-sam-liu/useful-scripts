@@ -1,0 +1,87 @@
+README:  Gene_tools                       Last modified:  February 3, 2010
+
+As files are added, notification will be sent via the gene-announce list.
+
+You may subscribe to the gene-announce list here:
+            http://www.ncbi.nlm.nih.gov/mailman/listinfo/gene-announce
+
+SCOPE:
+Documentation for tools of interest to those processing information 
+  in Entrez Gene.
+
+
+Table of Contents:
+I.   taxidToGeneNames.pl
+       Sample script using E-utilities to extract name information from 
+       Entrez Gene for a species 
+
+II.  gene2xml  
+       program to process Entrez Gene's binary ASN.1 files into XML
+
+III. geneDocSum.pl
+       Sample script using E-utilities to extract GeneIDs and other fields 
+       from Entrez Gene using a query
+
+==========================================================================
+I. taxidToGeneNames.pl
+---------------------------------------------------------------------------
+      A representative perl script, using ESearch and ESummary, to extract
+GeneIDs, names and names for a species (i.e. by Taxonomy's id). Usage notes 
+provide when no arguments are supplied are:
+
+Usage: taxidToGeneNames.pl [option] -t taxonomyId -o xml|tab
+    Options:   -h     Display this usage help information
+               -v     Verbose
+               -o     output options
+                        xml  - XML
+                        tab  - tab-delimited
+
+Output is written to STDOUT. 
+
+Sample execution statement:
+
+       taxidToGeneNames.pl -t 9615 -o xml > 9615_genes
+
+
+==========================================================================
+II. gene2xml
+---------------------------------------------------------------------------
+    gene2xml is a standalone program that converts Entrez Gene ASN.1 into XML.
+    It also interconverts different formats of Entrez Gene ASN.1.  It is 
+    available for multiple platforms.
+
+    You may download this program and view its documentation from:
+
+ftp://ftp.ncbi.nlm.nih.gov/asn1-converters/by_program/gene2xml
+
+
+==========================================================================
+III. geneDocSum.pl
+---------------------------------------------------------------------------
+      A representative perl script, using ESearch and ESummary, to extract
+GeneIDs and other fields from the Document Summary (DocSum).  Usage notes
+provided when no arguments are supplied are:
+
+Usage: ./geneDocSum.pl [options] -q query -o xml|tab
+    Options:   -h     Display this usage help information
+               -v     Verbose
+               -q     Query to run against Entrez Gene, e.g. "has summary[prop]"
+               -o     Output options
+                        xml  - XML
+                        tab  - tab-delimited
+               -t     Tag from eutils xml to extract, e.g. "Summary"
+                        - is case sensitive
+                        - may be specified multiple times to extract multiple
+                              tags & values
+                        - used only with "-o tab" option
+                        - to see all available xml tags in the DocSum, run first
+                              with "-o xml" option
+
+
+Output is written to STDOUT.
+
+Sample execution statement:
+
+       geneDocSum.pl -q "has_summary[prop] AND chimpanzee[orgn]" -o tab -t Name -t Summary
+
+
