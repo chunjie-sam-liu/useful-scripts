@@ -32,3 +32,8 @@ It's used for extract bam based on the bed by samtools. And, also it's a simple 
 
 ## Add `killparallel`
 Kill process which contains "*"
+
+## Add cron-mysql.sh
+Restart MySQL after detecting not running. 
+
+
