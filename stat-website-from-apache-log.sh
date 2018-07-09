@@ -16,16 +16,21 @@ keyword=$1
 # ! apache2 log directory
 log_dir="/var/log/apache2/"
 logs=`find ${log_dir} -name "access*"`
+archive_dir="/home/liucj/tmp/stat-web-access"
 
 # ! output filename
-filename="apache-${keyword}.log"
+today=`date +'%Y-%m-%d'`
+filename="${archive_dir}/${keyword}-${today}.log"
 [[ -f ${filename} ]] && true > ${filename}
 
 for log in ${logs}
 do
     zgrep -i ${keyword} ${log} | awk -F ':' '{print $1}' | awk -F ' - - \\[' '{print $1,$2}' >> ${filename}
 done
-
 sed -i '/bin/Id' ${filename}
 
-Rscript plot-website-access.R ${filename}
+# ? plot website access by time
+Rscript plot-access-by-time.R ${filename} & 
+
+# ? plot website access by location
+Rscript plot-access-by-address.R ${filename} &
