@@ -24,7 +24,7 @@ sraList=(${sraList//,/ })
 for i in ${sraList[@]}
 do 
 	dir=${i:0:6}
-	nohup lftp -e "mirror /sra/sra-instant/reads/ByRun/sra/SRR/${dir}/${i} ." ftp-trace.ncbi.nih.gov>${i}.nohup.out&
+	nohup lftp -e "mirror /sra/sra-instant/reads/ByRun/sra/SRR/${dir}/${i} ${destdir}" ftp-trace.ncbi.nih.gov>${destdir}/${i}.nohup.out&
 done
 
 
