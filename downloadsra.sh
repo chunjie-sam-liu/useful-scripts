@@ -9,22 +9,21 @@
 #download data from sra through lftp
 #input srr id with comma delimited
 
+
+[[ "$#" -eq 2 ]] && destdir=$2 || destdir=$PWD
+
 if test -z "$1" 
 then
-	echo "input srr id list with comma delimited"
+	echo "Error: input srr id list with comma delimited"
 	exit 1
-fi 
+fi
 
 sraList=$1
 sraList=(${sraList//,/ })
 
-
 for i in ${sraList[@]}
 do 
-	#echo $i;
 	dir=${i:0:6}
-	#echo $dir
-	#sra=`echo $i|cut -c 7-9`
 	nohup lftp -e "mirror /sra/sra-instant/reads/ByRun/sra/SRR/${dir}/${i} ." ftp-trace.ncbi.nih.gov>${i}.nohup.out&
 done
 
