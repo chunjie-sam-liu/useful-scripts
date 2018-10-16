@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+if [[ $# -eq 0 ]]
+then
+    cmd="realpath *"
+    # echo ${cmd}
+    eval ${cmd}
+    exit 1
+fi
+
+cmd="realpath *${1}*"
+# echo ${cmd}
+eval ${cmd}
+
+
