@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+for i in `ls /home`;
+do
+  idi=`id ${i}`
+  [[ ${idi} =~ 'uid' ]] && {
+    user=`echo ${idi}|sed -n 's/uid=[[:digit:]]*(\([[:alpha:]]*\)) .*/\1/p'`
+    grp=`echo ${idi}|sed -n 's/.* gid=[[:digit:]]*(\([[:alpha:]]*\)) .*/\1/p'`
+    # echo ${user} ${grp}
+    cmd="chown -R ${user}.${grp} /home/${i} &"
+    # echo ${cmd}
+    eval ${cmd}
+  }
+done
