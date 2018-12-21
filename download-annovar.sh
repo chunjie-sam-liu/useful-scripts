@@ -13,7 +13,7 @@ ref=('refGene' 'knownGene' 'ensGene' 'ljb26_all' 'dbnsfp30a' 'dbnsfp31a_interpro
 
 for i in ${ref[*]}
 do 
-  cmd="${download} ${i} ${path}"
+  cmd="${download} ${i} ${path} &"
   echo ${cmd}
   eval ${cmd}
 done
