@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+param=$#
+serv=$1
+
+arr[1]='up'
+arr[2]='dn'
+arr[3]='ss'
+
+function usage {
+	if [ "$param" -ne 1 ]
+	then
+		echo "Usage:"
+		echo "	jrocker up/dn/ss"
+		echo "up -> up, dn -> down, ss -> status"
+		exit 1
+	fi
+
+	if [[ ! "${arr[@]}" =~ "$serv" ]]
+	then
+		echo "Error:"
+		echo "	Input must be one of 'up', 'dn' and 'ss' to start jrocker"
+		echo "Example:"
+		echo "	jrocker ss"
+		exit 1
+	fi
+}
+
+function up {
+  docker run -d -p 8686:8787 \
+  -v /home/liucj/:/home/liucj/ \
+  -v /data/liucj/:/home/liucj/data/ \
+  -v /project/liucj/:/home/liucj/project/ \
+  -v /data/liucj/R/:/home/liucj/R/ \
+  -v /data/liucj/scripts/:/home/liucj/scripts/ \
+  -v /data/liucj/tools/:/home/liucj/tools/ \
+  -e USER=rstudio -e PASSWORD=rstudio \
+  -e USERID=$EUID -e GROUPID=$EUID -e ROOT=TRUE \
+  --name Jrocker chunjiesamliu/jrocker:latest
+
+	echo "Start Jrocker successfully."
+}
+
+function dn {
+  docker container stop Jrocker
+	echo "Stop Jrocker."
+  docker container rm Jrocker
+	echo "Remove Jrocker."
+}
+
+function ss {
+	docker inspect -f '{{.State.Running}}' Jrocker
+}
+
+usage
+[[ ${serv} = 'up' ]] && up || usage
+[[ ${serv} = 'dn' ]] && dn || usage
+[[ ${serv} = 'ss' ]] && ss || usage
