@@ -9,6 +9,8 @@ arr[1]='up'
 arr[2]='dn'
 arr[3]='ss'
 arr[4]='ex'
+arr[5]='im'
+arr[6]='rm'
 
 function usage {
 	if [ "$param" -gt 2 -o "${param}" -lt 1 ]
@@ -59,7 +61,7 @@ function up {
 		-v /data/liucj/R/:/home/liucj/R/ \
 		-v /data/liucj/scripts/:/home/liucj/scripts/ \
 		-v /data/liucj/tools/:/home/liucj/tools/ \
-		-e USER=liucj -e PASSWORD=u201012670 \
+		-e USER=username -e PASSWORD=password \
 		-e USERID=$EUID -e GROUPID=$EUID -e ROOT=TRUE \
 		--name Jrocker-${port} chunjiesamliu/jrocker:latest
 	fi
@@ -118,8 +120,25 @@ function ex {
 }
 
 
+function im {
+	docker image ls chunjiesamliu/jrocker
+}
+
+function rm {
+	if [ ${param} -eq 2 ]
+	then
+		docker image rm ${variable}
+	else
+		echo "Notice: Input valid jrocker image."
+		exit 1
+	fi
+	 
+}
+
 usage
 [[ ${serv} = 'up' ]] && up || usage
 [[ ${serv} = 'dn' ]] && dn || usage
 [[ ${serv} = 'ss' ]] && ss || usage
 [[ ${serv} = 'ex' ]] && ex || usage
+[[ ${serv} = 'im' ]] && im || usage
+[[ ${serv} = 'rm' ]] && rm || usage
