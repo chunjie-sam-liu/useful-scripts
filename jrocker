@@ -32,6 +32,17 @@ function usage {
 	fi
 }
 
+function cpf {
+	d=$1
+	for i in `find /home/liucj -mindepth 1 -prune -name '.*'`;
+	do
+		name=`basename ${i}`
+		[[ ${name} = '.rstudio' ]] && continue
+		cmd="cp -rf ${i} ${d}/${name}"
+		eval ${cmd}
+	done
+}
+
 function up {
 	cs=(`docker ps|grep -o Jrocker.*$`)
 	if [ ${param} -ne 2 ]
@@ -54,8 +65,20 @@ function up {
 		[[ ${cs[@]} =~ "Jrocker-${port}" ]] && echo "Error: Jrocker-${port} exists." && exit 1
 		[[ ${port} -lt 8686 ]] && echo "Error: New port should be larger than 8686." && exit 1
 
+		jd=/home/liucj/tmp/Jrocker-${port}
+
+		[[ ! -d ${jd} ]] \
+		&& mkdir -p ${jd} \
+		&& cpf ${jd} \
+		&& ln -s /data/liucj ${jd}/data \
+		&& ln -s /project/liucj ${jd}/project \
+		&& ln -s /data/liucj/github ${jd}/github \
+		&& ln -s /data/liucj/R ${jd}/R \
+		&& ln -s /data/liucj/scripts ${jd}/scripts \
+		&& ln -s /data/liucj/tools ${jd}/tools
+
 		docker run -d -p ${port}:8787 \
-		-v /home/liucj/:/home/liucj/ \
+		-v ${jd}:/home/liucj/ \
 		-v /data/liucj/:/home/liucj/data/ \
 		-v /project/liucj/:/home/liucj/project/ \
 		-v /data/liucj/R/:/home/liucj/R/ \
@@ -116,9 +139,8 @@ function ex {
 	cs=(`docker ps|grep -o Jrocker.*$`)
 	c="Jrocker-${variable}"
 	[[ ${param} -ne 2 ]] && echo "Error: Input port for container." && ss && exit 1
-	[[ ${param} -eq 2 && ${cs[@]} =~ ${variable} ]] && eval "docker exec -it -u liucj:root ${c} bash" || echo "Notice: Input valid jrocker port." && docker ps|grep Jrocker
+	[[ ${param} -eq 2 && ${cs[@]} =~ ${variable} ]] && eval "docker exec -it -u liucj:root -w ~ ${c} bash" || echo "Notice: Input valid jrocker port." && docker ps|grep Jrocker
 }
-
 
 function im {
 	docker image ls chunjiesamliu/jrocker
