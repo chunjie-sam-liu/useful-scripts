@@ -37,7 +37,7 @@ function cpf {
 	for i in `find /home/liucj -mindepth 1 -prune -name '.*'`;
 	do
 		name=`basename ${i}`
-		[[ ${name} = '.rstudio' ]] && continue
+		[[ ${name} =~ '.rstudio' ]] && continue
 		cmd="cp -rf ${i} ${d}/${name}"
 		eval ${cmd}
 	done
@@ -65,7 +65,7 @@ function up {
 		[[ ${cs[@]} =~ "Jrocker-${port}" ]] && echo "Error: Jrocker-${port} exists." && exit 1
 		[[ ${port} -lt 8686 ]] && echo "Error: New port should be larger than 8686." && exit 1
 
-		jd=/home/liucj/tmp/Jrocker-${port}
+		jd=/home/liucj/.rstudio-cj/Jrocker-${port}
 
 		[[ ! -d ${jd} ]] \
 		&& mkdir -p ${jd} \
