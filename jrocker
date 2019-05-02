@@ -3,7 +3,7 @@
 param=$#
 serv=$1
 variable=$2
-port=8686
+port=${variable:-8686}
 
 arr[1]='up'
 arr[2]='dn'
@@ -40,12 +40,9 @@ function usage {
 }
 
 
-
-
-
 function cpf {
 	d=$1
-	for i in `find /home/liucj -mindepth 1 -prune -name '.*'`;
+	for i in `find ${HOME} -mindepth 1 -prune -name '.*'`;
 	do
 		name=`basename ${i}`
 		[[ ${name} =~ '.rstudio' ]] && continue
@@ -56,27 +53,11 @@ function cpf {
 
 function up {
 	cs=(`docker ps|grep -o Jrocker.*$`)
-	if [ ${param} -ne 2 ]
-	then
-		[[ ${cs[@]} =~ "Jrocker-${port}" ]] && echo "Error: Jrocker-${port} exists." && exit 1
+	[[ ${cs[@]} =~ "Jrocker-${port}" ]] && echo "Error: Jrocker-${port} exists." && exit 1
 
-		docker run -d -p ${port}:8787 \
-		-v /home/liucj/:/home/liucj/ \
-		-v /data/liucj/:/home/liucj/data/ \
-		-v /project/liucj/:/home/liucj/project/ \
-		-v /data/liucj/R/:/home/liucj/R/ \
-		-v /data/liucj/scripts/:/home/liucj/scripts/ \
-		-v /data/liucj/tools/:/home/liucj/tools/ \
-		-e USER=username -e PASSWORD=password \
-		-e USERID=$EUID -e GROUPID=$EUID -e ROOT=TRUE \
-		--name Jrocker-${port} chunjiesamliu/jrocker:latest
+	[[ ${port} -lt 8686 ]] && echo "Error: New port should be larger than 8686." && exit 1
 
-	else
-		port=${variable}
-		[[ ${cs[@]} =~ "Jrocker-${port}" ]] && echo "Error: Jrocker-${port} exists." && exit 1
-		[[ ${port} -lt 8686 ]] && echo "Error: New port should be larger than 8686." && exit 1
-
-		jd=/home/liucj/.rstudio-cj/Jrocker-${port}
+	jd=${HOME}/.rstudio-cj/Jrocker-${port}
 
 		[[ ! -d ${jd} ]] \
 		&& mkdir -p ${jd} \
@@ -98,16 +79,16 @@ function up {
 		-e USER=username -e PASSWORD=password \
 		-e USERID=$EUID -e GROUPID=$EUID -e ROOT=TRUE \
 		--name Jrocker-${port} chunjiesamliu/jrocker:latest
-	fi
-  echo "Start Jrocker successfully with port ${port}."
+
+	echo "Start Jrocker successfully with port ${port}."
 }
 
 function dn {
 	cs=(`docker ps|grep -o Jrocker.*$`)
 	if [ ${param} -eq 2 ]
 	then
-		c="Jrocker-${variable}"
-		if [[ ${cs[@]} =~ ${variable} ]] 
+		c="Jrocker-${port}"
+		if [[ ${cs[@]} =~ ${port} ]] 
 		then
 			docker container stop ${c}
 			echo "Container ${c} is stopped"
@@ -148,16 +129,23 @@ function ss {
 
 function ex {
 	cs=(`docker ps|grep -o Jrocker.*$`)
-	c="Jrocker-${variable}"
+	c="Jrocker-${port}"
 	[[ ${param} -ne 2 ]] && echo "Error: Input port for container." && ss && exit 1
-	[[ ${param} -eq 2 && ${cs[@]} =~ ${variable} ]] && eval "docker exec -it -u liucj:root -w ~ ${c} bash" || echo "Notice: Input valid jrocker port." && docker ps|grep Jrocker
+
+	if [[ ${param} -eq 2 && ${cs[@]} =~ ${port} ]]
+	then
+		docker exec -it -u liucj:root -w ~ ${c} bash
+	else
+		echo "Notice: Input valid jrocker port."
+		docker ps|grep Jrocker
+	fi
 }
 
-function im {
+function ims {
 	docker image ls chunjiesamliu/jrocker
 }
 
-function rm {
+function rmi {
 	if [ ${param} -eq 2 ]
 	then
 		docker image rm ${variable}
@@ -175,4 +163,3 @@ usage
 [[ ${serv} = 'ex' ]] && ex || usage
 [[ ${serv} = 'ims' ]] && ims || usage
 [[ ${serv} = 'rmi' ]] && rmi || usage
-
