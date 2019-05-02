@@ -17,23 +17,30 @@ function usage {
 	then
 		echo "Usage:"
 		echo "	jrocker [up|dn|ss|ex|ims|rmi] [port|image-id]"
-		echo "up -> startup a container for jrocker, default port 8686."
-		echo "dn -> shutdown a container or all container of jrocker."
-		echo "ss -> status of jrocker container."
-		echo "ims -> list images of chunjiesamliu/jrocker"
-		echo "rmi -> remove image of chunjiesamliu/jrocker"
+		echo "Details:"
+		echo "	up -> startup a container for jrocker, default port 8686."
+		echo "	dn -> shutdown a container or all container of jrocker."
+		echo "	ex -> exec jrocker container."
+		echo "	ss -> status of jrocker container."
+		echo "	ims -> list images of chunjiesamliu/jrocker"
+		echo "	rmi -> remove image of chunjiesamliu/jrocker"
+		echo "For example:"
+		echo "	jrocker up 9191"
 		exit 1
 	fi
 
 	if [[ ! "${arr[@]}" =~ "$serv" ]]
 	then
 		echo "Error:"
-		echo "	Input must be one of 'up', 'dn' and 'ss' to start jrocker"
+		echo "	Input must be one of 'up', 'dn', 'ss', 'ex', 'ims' and 'rmi' to start jrocker"
 		echo "Example:"
 		echo "	jrocker ss"
 		exit 1
 	fi
 }
+
+
+
 
 
 function cpf {
