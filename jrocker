@@ -9,16 +9,19 @@ arr[1]='up'
 arr[2]='dn'
 arr[3]='ss'
 arr[4]='ex'
-arr[5]='im'
-arr[6]='rm'
+arr[5]='ims'
+arr[6]='rmi'
 
 function usage {
 	if [ "$param" -gt 2 -o "${param}" -lt 1 ]
 	then
 		echo "Usage:"
-		echo "	jrocker up/dn/ss"
-		echo "up -> up, dn -> down, ss -> status"
-		echo "default port 8686"
+		echo "	jrocker [up|dn|ss|ex|ims|rmi] [port|image-id]"
+		echo "up -> startup a container for jrocker, default port 8686."
+		echo "dn -> shutdown a container or all container of jrocker."
+		echo "ss -> status of jrocker container."
+		echo "ims -> list images of chunjiesamliu/jrocker"
+		echo "rmi -> remove image of chunjiesamliu/jrocker"
 		exit 1
 	fi
 
@@ -31,6 +34,7 @@ function usage {
 		exit 1
 	fi
 }
+
 
 function cpf {
 	d=$1
@@ -162,5 +166,6 @@ usage
 [[ ${serv} = 'dn' ]] && dn || usage
 [[ ${serv} = 'ss' ]] && ss || usage
 [[ ${serv} = 'ex' ]] && ex || usage
-[[ ${serv} = 'im' ]] && im || usage
-[[ ${serv} = 'rm' ]] && rm || usage
+[[ ${serv} = 'ims' ]] && ims || usage
+[[ ${serv} = 'rmi' ]] && rmi || usage
+
