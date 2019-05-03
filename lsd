@@ -8,7 +8,7 @@ then
     exit 1
 fi
 
-cmd="realpath *${1}*"
+cmd="ls|grep -i ${1}|xargs realpath"
 # echo ${cmd}
 eval ${cmd}
 
