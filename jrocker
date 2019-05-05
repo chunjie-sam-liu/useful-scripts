@@ -52,7 +52,7 @@ function cpf {
 }
 
 function up {
-	cs=(`docker ps|grep -o Jrocker.*$`)
+	cs=(`docker ps -a|grep -o Jrocker.*$`)
 	[[ ${cs[@]} =~ "Jrocker-${port}" ]] && echo "Error: Jrocker-${port} exists." && exit 1
 
 	[[ ${port} -lt 8686 ]] && echo "Error: New port should be larger than 8686." && exit 1
@@ -76,7 +76,7 @@ function up {
 		-v /data/liucj/R/:/home/liucj/R/ \
 		-v /data/liucj/scripts/:/home/liucj/scripts/ \
 		-v /data/liucj/tools/:/home/liucj/tools/ \
-		-e USER=username -e PASSWORD=password \
+		-e USER=🙃 -e PASSWORD=🙃 \
 		-e USERID=$EUID -e GROUPID=$EUID -e ROOT=TRUE \
 		--name Jrocker-${port} chunjiesamliu/jrocker:latest
 
@@ -84,7 +84,7 @@ function up {
 }
 
 function dn {
-	cs=(`docker ps|grep -o Jrocker.*$`)
+	cs=(`docker ps -a|grep -o Jrocker.*$`)
 	if [ ${param} -eq 2 ]
 	then
 		c="Jrocker-${port}"
@@ -95,7 +95,7 @@ function dn {
 			docker container rm ${c}
 			echo "Container ${c} is removed"
 		else
-			echo "Error: Container ${c} not in the docker ps"
+			echo "Error: Container ${c} not in the docker ps -a"
 		fi
 	else
 		echo "Notice: You are going to stop all Jrocker container ${cs[@]}."
@@ -123,12 +123,12 @@ function dn {
 }
 
 function ss {
-	info=`docker ps|grep Jrocker`
-	[[ -z ${info} ]] && echo "Notice: no Jrocker container." || docker ps|grep Jrocker
+	info=`docker ps -a|grep Jrocker`
+	[[ -z ${info} ]] && echo "Notice: no Jrocker container." || docker ps -a|grep Jrocker
 }
 
 function ex {
-	cs=(`docker ps|grep -o Jrocker.*$`)
+	cs=(`docker ps -a|grep -o Jrocker.*$`)
 	c="Jrocker-${port}"
 	[[ ${param} -ne 2 ]] && echo "Error: Input port for container." && ss && exit 1
 
@@ -137,7 +137,7 @@ function ex {
 		docker exec -it -u liucj:root -w ~ ${c} bash
 	else
 		echo "Notice: Input valid jrocker port."
-		docker ps|grep Jrocker
+		docker ps -a|grep Jrocker
 	fi
 }
 
