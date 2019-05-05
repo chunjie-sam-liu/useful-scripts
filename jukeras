@@ -1,0 +1,144 @@
+#!/usr/bin/env bash
+
+param=$#
+serv=$1
+variable=$2
+port=${variable:-10000}
+
+arr[1]='up'
+arr[2]='dn'
+arr[3]='ss'
+arr[4]='ex'
+arr[5]='ims'
+arr[6]='rmi'
+
+
+function usage {
+	if [ "$param" -gt 2 -o "${param}" -lt 1 ]
+	then
+		echo "Usage:"
+		echo "	jukeras [up|dn|ss|ex|ims|rmi] [port|image-id]"
+		echo "Details:"
+		echo "	up -> startup a container for jukeras, default port 10000."
+		echo "	dn -> shutdown a container or all container of jukeras."
+		echo "	ex -> exec jukeras container."
+		echo "	ss -> status of jukeras container."
+		echo "	ims -> list images of chunjiesamliu/jukeras"
+		echo "	rmi -> remove image of chunjiesamliu/jukeras"
+		echo "For example:"
+		echo "	jukeras up 10000"
+		exit 1
+	fi
+
+	if [[ ! "${arr[@]}" =~ "$serv" ]]
+	then
+		echo "Error:"
+		echo "	Input must be one of 'up', 'dn', 'ss', 'ex', 'ims' and 'rmi' to start jukeras"
+		echo "Example:"
+		echo "	jukeras ss"
+		exit 1
+	fi
+}
+
+function up {
+	cs=(`docker ps -a|grep -o Jukeras.*$`)
+	[[ ${cs[@]} =~ "Jukeras-${port}" ]] && echo "Error: Jukeras-${port} exists." && exit 1
+
+	[[ ${port} -lt 10000 ]] && echo "Error: New port should be larger than 10000." && exit 1
+
+  docker run -d -p ${port}:8888 \
+    -v /home/liucj/:/home/liucj/jupyter-workspace/ \
+    -v /data/liucj/:/home/liucj/jupyter-workspace/data/ \
+    -v /project/liucj/:/home/liucj/jupyter-workspace/project/ \
+    --user root -w /home/liucj/jupyter-workspace \
+    -e NB_USER=liucj -e NB_UID=$EUID \
+    -e NB_GID=$EUID -e NB_GROUP=liucj \
+    -e CHOWN_HOME=yes -e CHOWN_HOME_OPTS='-R' \
+    -e GRANT_SUDO=yes -e JUPYTER_ENABLE_LAB=yes \
+    --name Jukeras-${port} chunjiesamliu/jukeras start-notebook.sh \
+    --NotebookApp.password='🙃'
+
+	echo "Start Jukeras successfully with port ${port}."
+}
+
+function dn {
+	cs=(`docker ps -a|grep -o Jukeras.*$`)
+	if [ ${param} -eq 2 ]
+	then
+		c="Jukeras-${port}"
+		if [[ ${cs[@]} =~ ${port} ]] 
+		then
+			docker container stop ${c}
+			echo "Container ${c} is stopped"
+			docker container rm ${c}
+			echo "Container ${c} is removed"
+		else
+			echo "Error: Container ${c} not in the docker ps -a"
+		fi
+	else
+		echo "Notice: You are going to stop all Jukeras container ${cs[@]}."
+		echo "Input (yes/no):"
+		read choice
+		case ${choice} in
+			yes)
+				echo "All Jukeras container stopped."
+				for c in ${cs[@]};
+				do
+					docker container stop ${c}
+					echo "Container ${c} is stopped"
+					docker container rm ${c}
+					echo "Container ${c} is removed"
+				done
+				;;
+			no)
+				echo "No Jukeras container stopped."
+				;;
+			*)
+				echo "No Jukeras container stopped."
+				;;
+		esac
+	fi
+}
+
+function ss {
+	info=`docker ps|grep Jukeras`
+	[[ -z ${info} ]] && echo "Notice: no Jukeras container." || docker ps|grep Jukeras
+}
+
+function ex {
+	cs=(`docker ps -a|grep -o Jukeras.*$`)
+	c="Jukeras-${port}"
+	[[ ${param} -ne 2 ]] && echo "Error: Input port for container." && ss && exit 1
+
+	if [[ ${param} -eq 2 && ${cs[@]} =~ ${port} ]]
+	then
+		docker exec -it -u liucj:root -w ~/jupyter-workspace ${c} bash
+	else
+		echo "Notice: Input valid Jukeras port."
+		docker ps -a|grep Jukeras
+	fi
+}
+
+function ims {
+	docker image ls chunjiesamliu/jukeras
+}
+
+function rmi {
+	if [ ${param} -eq 2 ]
+	then
+		docker image rm ${variable}
+	else
+		echo "Notice: Input valid Jukeras image."
+		exit 1
+	fi
+	 
+}
+
+
+usage
+[[ ${serv} = 'up' ]] && up || usage
+[[ ${serv} = 'dn' ]] && dn || usage
+[[ ${serv} = 'ss' ]] && ss || usage
+[[ ${serv} = 'ex' ]] && ex || usage
+[[ ${serv} = 'ims' ]] && ims || usage
+[[ ${serv} = 'rmi' ]] && rmi || usage
