@@ -9,22 +9,24 @@ arr[1]='up'
 arr[2]='dn'
 arr[3]='ss'
 arr[4]='ex'
-arr[5]='ims'
+arr[5]='imgs'
 arr[6]='rmi'
+arr[7]='pull'
 
 
 function usage {
 	if [ "$param" -gt 2 -o "${param}" -lt 1 ]
 	then
 		echo "Usage:"
-		echo "	jukeras [up|dn|ss|ex|ims|rmi] [port|image-id]"
+		echo "	jukeras [up|dn|ss|ex|imgs|rmi] [port|image-id]"
 		echo "Details:"
 		echo "	up -> startup a container for jukeras, default port 10000."
 		echo "	dn -> shutdown a container or all container of jukeras."
 		echo "	ex -> exec jukeras container."
 		echo "	ss -> status of jukeras container."
-		echo "	ims -> list images of chunjiesamliu/jukeras"
+		echo "	imgs -> list images of chunjiesamliu/jukeras"
 		echo "	rmi -> remove image of chunjiesamliu/jukeras"
+		echo "	pull -> pull latest image of chunjiesamliu/jukeras"
 		echo "For example:"
 		echo "	jukeras up 10000"
 		exit 1
@@ -33,7 +35,7 @@ function usage {
 	if [[ ! "${arr[@]}" =~ "$serv" ]]
 	then
 		echo "Error:"
-		echo "	Input must be one of 'up', 'dn', 'ss', 'ex', 'ims' and 'rmi' to start jukeras"
+		echo "	Input must be one of 'up', 'dn', 'ss', 'ex', 'imgs' and 'rmi' to start jukeras"
 		echo "Example:"
 		echo "	jukeras ss"
 		exit 1
@@ -119,7 +121,7 @@ function ex {
 	fi
 }
 
-function ims {
+function imgs {
 	docker image ls chunjiesamliu/jukeras
 }
 
@@ -135,10 +137,15 @@ function rmi {
 }
 
 
+function pull {
+	docker pull chunjiesamliu/jukeras:latest
+}
+
 usage
 [[ ${serv} = 'up' ]] && up || usage
 [[ ${serv} = 'dn' ]] && dn || usage
 [[ ${serv} = 'ss' ]] && ss || usage
 [[ ${serv} = 'ex' ]] && ex || usage
-[[ ${serv} = 'ims' ]] && ims || usage
 [[ ${serv} = 'rmi' ]] && rmi || usage
+[[ ${serv} = 'imgs' ]] && imgs || usage
+[[ ${serv} = 'pull' ]] && pull || usage
