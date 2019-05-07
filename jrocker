@@ -9,21 +9,23 @@ arr[1]='up'
 arr[2]='dn'
 arr[3]='ss'
 arr[4]='ex'
-arr[5]='ims'
+arr[5]='imgs'
 arr[6]='rmi'
+arr[7]='pull'
 
 function usage {
 	if [ "$param" -gt 2 -o "${param}" -lt 1 ]
 	then
 		echo "Usage:"
-		echo "	jrocker [up|dn|ss|ex|ims|rmi] [port|image-id]"
+		echo "	jrocker [up|dn|ss|ex|imgs|rmi] [port|image-id]"
 		echo "Details:"
 		echo "	up -> startup a container for jrocker, default port 8686."
 		echo "	dn -> shutdown a container or all container of jrocker."
 		echo "	ex -> exec jrocker container."
 		echo "	ss -> status of jrocker container."
-		echo "	ims -> list images of chunjiesamliu/jrocker"
+		echo "	imgs -> list images of chunjiesamliu/jrocker"
 		echo "	rmi -> remove image of chunjiesamliu/jrocker"
+		echo "	pull -> pull latest image of chunjiesamliu/jrocker"
 		echo "For example:"
 		echo "	jrocker up 9191"
 		exit 1
@@ -32,13 +34,12 @@ function usage {
 	if [[ ! "${arr[@]}" =~ "$serv" ]]
 	then
 		echo "Error:"
-		echo "	Input must be one of 'up', 'dn', 'ss', 'ex', 'ims' and 'rmi' to start jrocker"
+		echo "	Input must be one of 'up', 'dn', 'ss', 'ex', 'imgs' and 'rmi' to start jrocker"
 		echo "Example:"
 		echo "	jrocker ss"
 		exit 1
 	fi
 }
-
 
 function cpf {
 	d=$1
@@ -57,7 +58,7 @@ function up {
 
 	[[ ${port} -lt 8686 ]] && echo "Error: New port should be larger than 8686." && exit 1
 
-	jd=${HOME}/.rstudio-cj/Jrocker-${port}
+	jd=/home/liucj/.rstudio-jrocker/Jrocker-${port}
 
 		[[ ! -d ${jd} ]] \
 		&& mkdir -p ${jd} \
@@ -123,8 +124,8 @@ function dn {
 }
 
 function ss {
-	info=`docker ps -a|grep Jrocker`
-	[[ -z ${info} ]] && echo "Notice: no Jrocker container." || docker ps -a|grep Jrocker
+	info=`docker ps|grep Jrocker`
+	[[ -z ${info} ]] && echo "Notice: no Jrocker container." || docker ps|grep Jrocker
 }
 
 function ex {
@@ -141,7 +142,7 @@ function ex {
 	fi
 }
 
-function ims {
+function imgs {
 	docker image ls chunjiesamliu/jrocker
 }
 
@@ -156,10 +157,15 @@ function rmi {
 	 
 }
 
+function pull {
+	docker pull chunjiesamliu/jrocker:latest
+}
+
 usage
 [[ ${serv} = 'up' ]] && up || usage
 [[ ${serv} = 'dn' ]] && dn || usage
 [[ ${serv} = 'ss' ]] && ss || usage
 [[ ${serv} = 'ex' ]] && ex || usage
-[[ ${serv} = 'ims' ]] && ims || usage
 [[ ${serv} = 'rmi' ]] && rmi || usage
+[[ ${serv} = 'imgs' ]] && imgs || usage
+[[ ${serv} = 'pull' ]] && pull || usage
