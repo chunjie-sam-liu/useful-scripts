@@ -4,7 +4,7 @@
 # Mail: samliu@hust.edu.cn
 # Created Time: Tue 06 Dec 2016 04:39:49 PM CST
 #########################################################################
-#!/bin/bash
+#!/usr/bin/env bash
 
 params=$#
 scripts=$1
