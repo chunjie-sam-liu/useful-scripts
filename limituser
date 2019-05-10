@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+user=${1:-sb}
+
+iduser=$(id -u ${user})
+
+[[ -z ${iduser} ]] && { echo "Error: no user ${user} in the passwd."; exit 1; }
+[[ ${user} == "liucj" ]] && { echo "Error: root user"; exit 1; }
+[[ ${user} == "root" ]] && { echo "Error: root user"; exit 1; }
+
+# ps -u ${user} -o pcpu,pid,user,args --no-headers|awk '$1 > 200'|sort -t. -nk1,2 -k4,4 -r
+pids=`ps -u ${user} -o pcpu,pid,user,args --no-headers|awk '$1 > 200'|sort -t. -nk1,2 -k4,4 -r|awk '{print $1}'`
+
+for p in ${pids[@]}
+do
+  cmd="cpulimit -b -c 1 -l 50 -p ${p}"
+  eval ${cmd}
+done
