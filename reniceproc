@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+param=$#
+
+[[ ${param} -ne 1 ]] && { 
+  echo "Error: Input process to prioritize."
+  echo "  Example: killparallel gdc-client."
+  exit 1 
+  }
+
+name=$1
+cmd="ps -fu liucj |grep -iE \"${name}\"|grep -v grep |awk '{print \$2}'|xargs renice -19 {}"
+echo $cmd
+# eval $cmd
