@@ -9,10 +9,10 @@ iduser=$(id -u ${user})
 [[ ${user} == "root" ]] && { echo "Error: root user"; exit 1; }
 
 # ps -u ${user} -o pcpu,pid,user,args --no-headers|awk '$1 > 200'|sort -t. -nk1,2 -k4,4 -r
-pids=`ps -u ${user} -o pcpu,pid,user,args --no-headers|awk '$1 > 200'|sort -t. -nk1,2 -k4,4 -r|awk '{print $1}'`
+pids=`ps -u ${user} -o pcpu,pid,user,args --no-headers|sort -t. -nk1,2 -k4,4 -r|awk '{print $2}'`
 
 for p in ${pids[@]}
 do
-  cmd="cpulimit -b -c 1 -l 50 -p ${p}"
+  cmd="cpulimit -b -c 1 -l 20 -p ${p}"
   eval ${cmd}
 done
