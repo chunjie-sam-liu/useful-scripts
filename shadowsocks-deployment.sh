@@ -4,6 +4,9 @@ wget https://raw.githubusercontent.com/chunjie-sam-liu/useful-scripts/master/sha
 # install shadowsocks
 chmod a+xshadowsocks.sh
 bash shadowsocks.sh
+# specify password: password
+# connecting port: 1070
+# encryption: aes-256-cfb 7
 
 # open filewall
 firewall-cmd --permanent --zone=public --add-port=1070/tcp
