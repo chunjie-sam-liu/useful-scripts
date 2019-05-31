@@ -17,7 +17,7 @@ echo "net.ipv4.tcp_fastopen = 3" >> /etc/sysctl.conf
 /etc/init.d/shadowsocks restart
 
 # run bbr
-wget --no-check-certificate https://raw.githubusercontent.com/chunjie-sam-liu/useful-scripts/master/bbr.sh
+wget --no-check-certificate https://raw.githubusercontent.com/chunjie-sam-liu/useful-scripts/master/shadowsocks-bbr.sh
 chmod +x bbr.sh
 bash bbr.sh
 
