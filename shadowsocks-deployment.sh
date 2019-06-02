@@ -21,8 +21,8 @@ echo "net.ipv4.tcp_fastopen = 3" >> /etc/sysctl.conf
 
 # run bbr
 wget --no-check-certificate https://raw.githubusercontent.com/chunjie-sam-liu/useful-scripts/master/shadowsocks-bbr.sh
-chmod +x bbr.sh
-bash bbr.sh
+chmod +x shadowsocks-bbr.sh
+bash shadowsocks-bbr.sh
 
 # google scholar ipv6
 echo "2404:6800:4008:c06::be scholar.google.com" >> /etc/hosts
