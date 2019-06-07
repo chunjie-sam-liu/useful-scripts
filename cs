@@ -33,17 +33,17 @@ dest=${4:-${PWD}}
 
 function errorinfo {
   echo "Usage:"
-  echo "    conserv [login|copyto|download] [server]"
+  echo "    connect server [login|copyto|download] [server]"
   echo "Details:"
   echo "    login -> login, log into server."
   echo "    copyto -> copyto, copyto files to server."
   echo "    download -> downlaod, download from server."
   echo "For example1:"
-  echo "    conserv login 1."
+  echo "    connect server login 1."
   echo "    example2:"
-  echo "    conserv copyto 1 source destination."
+  echo "    connect server copyto 1 source destination."
   echo "    example3:"
-  echo "    conserv download 1 source destination."
+  echo "    connect server download 1 source destination."
   echo "Notice: The source and destination should be absolute path. Source is a file and destination is directory."
 }
 
@@ -72,11 +72,12 @@ function usage {
   && exit 1
 
   # func should be in the funcs list
-  ! inarray ${func} ${funcs[@]} \
-  && echo "Error: Function '${func}' not in conserv." \
-  && echo "****************************************************" \
-  && errorinfo \
-  && exit 1
+  ! inarray ${func} ${funcs[@]} && {
+    echo "Error: Function '${func}' not in connect server."
+    echo "****************************************************"
+    errorinfo
+    exit 1
+  }
 
   # server should be valid.
   ! inarray ${server} ${!ipmaps[@]} \
