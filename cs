@@ -9,6 +9,9 @@ func=$1
 funcs[1]='login'
 funcs[2]='copyto'
 funcs[3]='download'
+funcs[4]='lg'
+funcs[5]='cp'
+funcs[6]='dl'
 
 # interface to server
 server=$2
@@ -75,23 +78,6 @@ function usage {
   && errorinfo \
   && exit 1
 
-  # func == login, param should be equal to 2
-  # copyto and download should be four parameters.
-  if [ ${func} == 'login' ]
-  then
-    [[ ${param} -ne 2 ]] \
-    && echo "Error: login should be two parameters." \
-    && echo "****************************************************" \
-    && errorinfo \
-    && exit 1
-  else
-    [[ ${param} -ne 4 ]] \
-    && echo "Error: copyto and download should be four parameters." \
-    && echo "****************************************************" \
-    && errorinfo \
-    && exit 1
-  fi
-
   # server should be valid.
   ! inarray ${server} ${!ipmaps[@]} \
   && echo "Error: Server '${server}' should be integer and in the '${!ipmaps[@]}'." \
@@ -99,22 +85,18 @@ function usage {
   && errorinfo \
   && exit 1
 
-  # for copyto, src file should exist.
-  [[ ${func} == 'copyto' && ! -f ${src} ]] \
-  && echo "Error: file '${src}' not exits." \
-  && echo "****************************************************" \
-  && errorinfo \
-  && exit 1
-
-  # for download, dest directory should exist.
-  [[ ${func} == 'download' && ! -d ${dest} ]] \
-  && echo "Error: directory '${dest}' not exists." \
-  && echo "****************************************************" \
-  && errorinfo \
-  && exit 1
 }
 
 function login {
+  # func == login, param should be equal to 2
+  # copyto and download should be four parameters.
+
+  [[ ${param} -ne 2 ]] \
+    && echo "Error: login should be two parameters." \
+    && echo "****************************************************" \
+    && errorinfo \
+    && exit 1
+
   cmd="sshpass -p '${loginfo[3]}' ssh -p ${loginfo[2]} ${loginfo[0]}@${loginfo[1]}"
   echo "Notice: login into ${server}."
   echo ${cmd}
@@ -124,12 +106,26 @@ function login {
 }
 
 function copyto {
+  # for copyto, src file should exist.
+  [[ ! -f ${src} ]] \
+  && echo "Error: file '${src}' not exits." \
+  && echo "****************************************************" \
+  && errorinfo \
+  && exit 1
+
   cmd="sshpass -p '${loginfo[3]}' rsync -rvz  -e 'ssh -p ${loginfo[2]}' --progress ${src} ${loginfo[0]}@${loginfo[1]}:${dest} "
   eval ${cmd}
   exit 0
 }
 
 function download {
+  # for download, dest directory should exist.
+  [[ -d ${dest} ]] \
+  && echo "Error: directory '${dest}' not exists." \
+  && echo "****************************************************" \
+  && errorinfo \
+  && exit 1
+
   cmd="sshpass -p '${loginfo[3]}' rsync -rvz -e 'ssh -p  ${loginfo[2]}' --progress ${loginfo[0]}@${loginfo[1]}:${src} ${dest}"
   eval ${cmd}
   exit 0
@@ -146,3 +142,8 @@ loginfo=($(parse_ip ${ipmaps[$server]}))
 [[ ${func} = 'login' ]] && login || usage
 [[ ${func} = 'copyto' ]] && copyto || usage
 [[ ${func} = 'download' ]] && download || usage
+
+# Alias
+[[ ${func} = 'lg' ]] && login || usage
+[[ ${func} = 'cp' ]] && copyto || usage
+[[ ${func} = 'dl' ]] && download || usage
