@@ -65,11 +65,12 @@ function parse_ip {
 
 function usage {
   # The parameters should be in 2 3 4
-  [[ ${param} -lt 2 || ${param} -gt 4 ]] \
-  && echo "Error: Parameters should be in 2, 3, 4." \
-  && echo "****************************************************" \
-  && errorinfo \
-  && exit 1
+  [[ ${param} -lt 2 || ${param} -gt 4 ]] && {
+    echo "Error: Parameters should be in 2, 4."
+    echo "****************************************************"
+    errorinfo
+    exit 1
+  }
 
   # func should be in the funcs list
   ! inarray ${func} ${funcs[@]} && {
