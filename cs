@@ -120,7 +120,7 @@ function copyto {
 
 function download {
   # for download, dest directory should exist.
-  [[ -d ${dest} ]] \
+  [[ ! -d ${dest} ]] \
   && echo "Error: directory '${dest}' not exists." \
   && echo "****************************************************" \
   && errorinfo \
