@@ -107,7 +107,7 @@ function login {
 
 function copyto {
   # for copyto, src file should exist.
-  [[ ! -f ${src} ]] \
+  [[ ! -e ${src} ]] \
   && echo "Error: file '${src}' not exits." \
   && echo "****************************************************" \
   && errorinfo \
