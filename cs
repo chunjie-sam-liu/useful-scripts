@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
-# connect/copyto/download for multiple servers
+
+# The scripts is for connect, copyto and download for multiple servers.
+# The known_iplist should be provided with username@ip@port@password@index@servername.
+# The known_iplist should be put in ~/.ssh and status code change to 600.
+
 
 # IP LIST
 ipfile=${HOME}/.ssh/known_iplist
@@ -7,6 +11,12 @@ ipfile=${HOME}/.ssh/known_iplist
 [[ ! -s ${ipfile} ]] && {
   echo "Error: ${ipfile} does not exist."
   exit 1
+}
+
+# check the mode of known_iplist
+[[ $(stat -c "%a" ${ipfile}) -ne 600 ]] && {
+  echo "Warning: The mode of file ${ipfile} is not 700. chmod 600 for ${ipfile}."
+  chmod 600 ${ipfile}
 }
 
 # load ipmaps
