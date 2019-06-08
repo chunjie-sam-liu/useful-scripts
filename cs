@@ -21,6 +21,7 @@ ipfile=${HOME}/.ssh/known_iplist
 
 # load ipmaps
 declare -a ipmaps
+declare -a servernames
 readarray known_ips < ${ipfile}
 
 # number of input parameters
@@ -74,7 +75,10 @@ function fn_load_iplist {
   do
     line=${line//#/ }
     line=(${line})
+    # save ips
     ipmaps[${line[1]}]=${line[0]}
+    # save server names
+    servernames[${line[1]}]=${line[2]}
   done
 }
 
@@ -124,7 +128,7 @@ function fn_login {
   }
 
   cmd="sshpass -p '${loginfo[3]}' ssh -p ${loginfo[2]} ${loginfo[0]}@${loginfo[1]}"
-  echo "Notice: login into ${server}."
+  echo "Notice: log into '${servernames[${server}]}'."
   echo ${cmd}
   echo "****************************************************"
   eval ${cmd}
@@ -141,6 +145,9 @@ function fn_copyto {
   }
 
   cmd="sshpass -p '${loginfo[3]}' rsync -rvz  -e 'ssh -p ${loginfo[2]}' --progress ${src} ${loginfo[0]}@${loginfo[1]}:${dest} "
+  echo "Notice: copy file '${src}' to '${dest}' on server '${servernames[${server}]}'."
+  echo ${cmd}
+  echo "****************************************************"
   eval ${cmd}
   exit 0
 }
@@ -155,6 +162,9 @@ function fn_download {
   }
 
   cmd="sshpass -p '${loginfo[3]}' rsync -rvz -e 'ssh -p  ${loginfo[2]}' --progress ${loginfo[0]}@${loginfo[1]}:${src} ${dest}"
+  echo "Notice: download file '${src}' to '${dest}' from server '${servernames[${server}]}'."
+  echo ${cmd}
+  echo "****************************************************"
   eval ${cmd}
   exit 0
 }
