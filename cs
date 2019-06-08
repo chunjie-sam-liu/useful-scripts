@@ -46,17 +46,17 @@ dest=${4:-${PWD}}
 
 function fn_errorinfo {
   echo "Usage:"
-  echo "    connect server [login|copyto|download] [server]"
+  echo "    cs [login|copyto|download] [server]"
   echo "Details:"
-  echo "    login -> login, log into server."
-  echo "    copyto -> copyto, copyto files to server."
-  echo "    download -> downlaod, download from server."
+  echo "    login|lg -> login, log into server."
+  echo "    copyto|cp -> copyto, copyto files to server."
+  echo "    download|dl -> downlaod, download from server."
   echo "For example1:"
-  echo "    connect server login 1."
+  echo "    cs login 1."
   echo "    example2:"
-  echo "    connect server copyto 1 source destination."
+  echo "    cs copyto 1 source destination."
   echo "    example3:"
-  echo "    connect server download 1 source destination."
+  echo "    cs download 1 source destination."
   echo "Notice: The source and destination should be absolute path. Source is a file and destination is directory."
 }
 
