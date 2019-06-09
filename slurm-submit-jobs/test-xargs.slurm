@@ -13,6 +13,9 @@
 #SBATCH --mail-user=chunjie-sam-liu@foxmail.com
 #SBATCH --mail-type=end
 
+
+# The key here to running multiple jobs is using the "cpus-per-task" directive and then setting the amount of memory per CPU (i.e. per task) with #SBATCH --mem-per-cpu 4G rather than asking for an overall amount of memory per node. Failure to do this may result in strange and sub-optimal behaviour!
+
 module load anaconda3/3.5.2
 module load intel/18.0.2
 module load mpi/intel/18.0.2
