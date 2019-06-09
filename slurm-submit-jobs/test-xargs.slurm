@@ -5,6 +5,7 @@
 #SBATCH --ntasks=40
 #SBATCH --ntasks-per-node=20 # nodes * ntasks-per-node = ntasks, all three must be provided.
 #SBATCH --cpus-per-task=1
+#SBATCH --mem-per-cpu=4G
 #SBATCH --time=00:01:00
 #SBATCH --job-name=test.slurm
 #SBATCH --output=test.slurm-%j.out
@@ -13,6 +14,8 @@
 #SBATCH --mail-type=end
 
 module load anaconda3/3.5.2
+module load intel/18.0.2
+module load mpi/intel/18.0.2
 
 echo $SLURM_TASKS_PER_NODE
 
