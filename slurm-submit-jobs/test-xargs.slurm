@@ -21,4 +21,6 @@ NR_TASKS=$(echo $SLURM_TASKS_PER_NODE | sed 's/\([0-9]\+\)(x\([0-9]\+\))/\1*\2/'
 
 echo $NR_TASKS
 
+# This will produce errors, some srun can not add to the steps.
+
 seq -w 1 300 | xargs -I {} --max-procs=$NR_TASKS bash -c "srun --exclusive --nodes 1 --ntasks 1 python demo.py {}"
