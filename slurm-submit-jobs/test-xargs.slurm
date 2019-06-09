@@ -3,7 +3,7 @@
 #SBATCH --partition=pg2_128_pool
 #SBATCH --nodes=2
 #SBATCH --ntasks=40
-#SBATCH --ntasks-per-node=20
+#SBATCH --ntasks-per-node=20 # nodes * ntasks-per-node = ntasks, all three must be provided.
 #SBATCH --cpus-per-task=1
 #SBATCH --time=00:01:00
 #SBATCH --job-name=test.slurm
