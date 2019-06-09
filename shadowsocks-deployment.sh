@@ -2,7 +2,7 @@
 wget https://raw.githubusercontent.com/chunjie-sam-liu/useful-scripts/master/shadowsocks.sh
 
 # install shadowsocks
-chmod a+xshadowsocks.sh
+chmod a+x shadowsocks.sh
 bash shadowsocks.sh
 # specify password: password
 # connecting port: 1070
@@ -13,8 +13,8 @@ firewall-cmd --permanent --zone=public --add-port=1070/tcp
 firewall-cmd --reload
 
 # echo ipv4
-echo "echo 3 > /proc/sys/net/ipv4/tcp_fastopen" >> /etc/rc.local 
-echo "net.ipv4.tcp_fastopen = 3" >> /etc/sysctl.conf 
+echo "echo 3 > /proc/sys/net/ipv4/tcp_fastopen" >> /etc/rc.local
+echo "net.ipv4.tcp_fastopen = 3" >> /etc/sysctl.conf
 
 # restart shadowsocks
 /etc/init.d/shadowsocks restart

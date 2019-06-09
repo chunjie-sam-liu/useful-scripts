@@ -73,7 +73,7 @@ function fn_inarray {
 function fn_load_iplist {
   for line in ${known_ips[@]};
   do
-    line=${line//#/ }
+    line=${line//\~/ }
     line=(${line})
     # save ips
     ipmaps[${line[1]}]=${line[0]}
@@ -84,8 +84,7 @@ function fn_load_iplist {
 
 function fn_parse_ip {
   local ip_str="$1"
-  line=${ip_str%#*}
-  line=${line//@/ }
+  line=${ip_str//\`/ }
   echo $line
 }
 
