@@ -2,8 +2,6 @@
 
 #SBATCH --partition=pg2_128_pool
 #SBATCH --nodes=2
-#SBATCH --ntasks=40
-#SBATCH --ntasks-per-node=20 # nodes * ntasks-per-node = ntasks, all three must be provided.
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=4G
 #SBATCH --time=00:01:00
@@ -14,6 +12,11 @@
 #SBATCH --mail-type=end
 
 # The key here to running multiple jobs is using the "cpus-per-task" directive and then setting the amount of memory per CPU (i.e. per task) with #SBATCH --mem-per-cpu 4G rather than asking for an overall amount of memory per node. Failure to do this may result in strange and sub-optimal behaviour!
+
+# This two should not be set
+#--ntasks=40
+#--ntasks-per-node=20
+
 
 module load anaconda3/3.5.2
 module load intel/18.0.2
