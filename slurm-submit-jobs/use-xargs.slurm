@@ -1,8 +1,8 @@
 /usr/bin/env bash
 
 
-#SBATCH -p v2_all
-#SBATCH -N 2
+#SBATCH -p v3_64_single
+#SBATCH -N 1
 #SBATCH --cpus-per-task=1
 #SBATCH --ntasks-per-node=20
 #SBATCH --time=00:30:00
