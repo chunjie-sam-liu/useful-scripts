@@ -22,3 +22,6 @@ do
 done
 
 wait
+
+# log into specific node
+# srun --pty  --nodelist=d0806 --partition=v3_64_single bash
