@@ -4,7 +4,6 @@
 #SBATCH --nodes=2
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=4G
-#SBATCH --time=00:01:00
 #SBATCH --job-name=test.slurm
 #SBATCH --output=test.slurm-%j.out
 #SBATCH --error=test.slurm-%j.err
@@ -17,7 +16,7 @@
 # The slurm knows the $SLURM_TASKS_PER_NODE to arrange the task to run on the specific node.
 #--ntasks=40
 #--ntasks-per-node=20
-
+#--time=00:01:00
 
 module load anaconda3/3.5.2
 module load intel/18.0.2
@@ -33,6 +32,10 @@ echo $NR_TASKS
 # This will produce errors, some srun can not add to the steps.
 
 seq -w 1 300 | xargs -I {} --max-procs=$NR_TASKS bash -c "srun --exclusive --nodes 1 --ntasks 1 python demo.py {}"
+
+# demo.py should provide exit code 0.
+# exit code 1 will throw errors.
+
 
 # Show the limits associated with account.
 # sacctmgr show assoc
