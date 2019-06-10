@@ -33,3 +33,6 @@ echo $NR_TASKS
 # This will produce errors, some srun can not add to the steps.
 
 seq -w 1 300 | xargs -I {} --max-procs=$NR_TASKS bash -c "srun --exclusive --nodes 1 --ntasks 1 python demo.py {}"
+
+# Show the limits associated with account.
+# sacctmgr show assoc

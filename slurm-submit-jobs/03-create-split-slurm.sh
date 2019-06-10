@@ -4,12 +4,12 @@ src_dir=/public1/home/pg2204/src
 split_dir=${src_dir}/split-not-run
 split_slurm_dir=${src_dir}/split-slurm-submit-jobs
 
-[[ -d ${split_slurm_dir} ]] && rm -rf ${split_slurm_dir} 
+[[ -d ${split_slurm_dir} ]] && rm -rf ${split_slurm_dir}
 
 mkdir -p ${split_slurm_dir}
 
 for i in `ls ${split_dir}/x*`
-do 
+do
   # create x.slurm
   filename=`basename $i`
   slurmfile=${split_slurm_dir}/${filename}.slurm
