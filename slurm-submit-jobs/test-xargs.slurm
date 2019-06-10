@@ -14,6 +14,7 @@
 # The key here to running multiple jobs is using the "cpus-per-task" directive and then setting the amount of memory per CPU (i.e. per task) with #SBATCH --mem-per-cpu 4G rather than asking for an overall amount of memory per node. Failure to do this may result in strange and sub-optimal behaviour!
 
 # This two should not be set
+# The slurm knows the $SLURM_TASKS_PER_NODE to arrange the task to run on the specific node.
 #--ntasks=40
 #--ntasks-per-node=20
 
