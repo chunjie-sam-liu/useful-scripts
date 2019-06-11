@@ -35,7 +35,8 @@ seq -w 1 300 | xargs -I {} --max-procs=$NR_TASKS bash -c "srun --exclusive --nod
 
 # demo.py should provide exit code 0.
 # exit code 1 will throw errors.
-
+# log into specific node
+# srun --pty  --nodelist=d0806 --partition=v3_64_single bash
 
 # Show the limits associated with account.
 # sacctmgr show assoc
