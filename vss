@@ -1,1 +1,28 @@
-/data/liucj/scripts
+#!/usr/bin/env bash
+
+# The server 1 and 3 can not download dynamically, use vss to transfer 10 bin to 1 and 3.
+
+dir_bin=/home/liucj/.vscode-server/bin
+old_bin_file=${dir_bin}/.old_bin
+
+[[ ! -s ${old_bin_file} ]] && {
+  echo "Error: ${old_bin_file} does not exist."
+  exit 1
+}
+
+# Old bins
+readarray old_bins < ${old_bin_file}
+
+# New bins
+new_bins=$(ls ${dir_bin})
+
+latest_bin=$(echo ${new_bins[@]} ${old_bins[@]} | tr ' ' '\n' | sort | uniq -u)
+
+# transfer
+cs cp 1 ${dir_bin}/${latest_bin} ${dir_bin} > /dev/null 2>&1
+cs cp 2 ${dir_bin}/${latest_bin} ${dir_bin} > /dev/null 2>&1
+cs cp 3 ${dir_bin}/${latest_bin} ${dir_bin} > /dev/null 2>&1
+cs cp 4 ${dir_bin}/${latest_bin} ${dir_bin} > /dev/null 2>&1
+
+# save new bin
+printf "%s\n" "${new_bins[@]}" > ${dir_bin}/.old_bin

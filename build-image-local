@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# @AUTHOR: Chun-Jie Liu
+# @CONTACT: chunjie.sam.liu.at.gmail.com
+# @DATE: 2019-07-11 19:36:36
+# @DESCRIPTION:
+
+
+image='jrocker'
+
+[[ -d "${HOME}/github/${image}" ]] && {
+  cd ${HOME}/github/${image}
+  git pull origin master
+} || {
+  git clone git@github.com:chunjie-sam-liu/${image}.git ${HOME}/github/${image}
+  cd ${HOME}/github/${image}
+}
+# Build docker iamge
+docker build -t chunjiesamliu/${image}:latest .
+
+# Push image to Dockerhub
+docker push chunjiesamliu/${image}:latest
+
+docker system prune
