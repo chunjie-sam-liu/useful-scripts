@@ -20,4 +20,4 @@ docker build -t chunjiesamliu/${image}:latest .
 # Push image to Dockerhub
 docker push chunjiesamliu/${image}:latest
 
-docker system prune
+docker system prune -af
