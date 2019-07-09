@@ -11,7 +11,7 @@ imgs=(chunjiesamliu/jrocker:latest)
 for img in ${imgs[@]};
 do
   tar_name=`echo ${img}|sed -e 's/\//_/'`
-  cmd="docker save --output ${tar_name}.tar ${img} &"
+  cmd="nohup docker save --output ${tar_name}.tar ${img} > ${tar_name}.nohup.out 2>&1 &"
   # echo ${cmd}
   eval ${cmd}
 done
