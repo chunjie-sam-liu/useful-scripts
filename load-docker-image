@@ -7,12 +7,13 @@
 
 # imgs=(python:2.7 ubuntu:16.04 broadinstitute/gatk:4.0.10.0 broadinstitute/gatk:4.0.8.1 ensemblorg/ensembl-vep:release_94.5 broadinstitute/genomes-in-the-cloud:2.3.1-1512499786 broadinstitute/oncotator:1.9.9.0)
 
-imgs=(chunjiesamliu/jrocker:latest)
+imgs=(chunjiesamliu/jrocker:latest chunjiesamliu/jukeras:latest)
+dir_scripts=/home/liucj/scripts
 
 for img in ${imgs[@]};
 do
   tar_name=`echo ${img}|sed -e 's/\//_/'`
-  cmd="nohup docker load --input ${tar_name}.tar > ${tar_name}.nohup.out 2>&1 &"
+  cmd="nohup docker load --input ${dir_scripts}/${tar_name}.tar > ${dir_scripts}/${tar_name}.nohup.out 2>&1 &"
   echo ${cmd}
   eval ${cmd}
 done
