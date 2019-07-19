@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# @AUTHOR: Chun-Jie Liu
+# @CONTACT: chunjie.sam.liu.at.gmail.com
+# @DATE: 2019-07-12 00:18:08
+# @DESCRIPTION: jrocker connect through jump Guo4
+
+param=$#
+serv=$1
+
+jump_port=3000
+remote_port=${2:-8686}
+local_port=${3:-${remote_port}}
+
+ss[1]=211.67.31.246
+ss[10]=211.67.31.243
+
+function fn_errorinfo {
+  echo "Usage:"
+  echo "    jrc [server] [remote_port|local_port]"
+  echo "For example1:"
+  echo "    jrc 1 ."
+  echo "    example2:"
+  echo "    jrc 1 8686"
+  echo "    example3:"
+  echo "    jrc 1 8686 9696."
+}
+function fn_usage {
+    [[ ${param} -lt 1 || ${param} -gt 3 ]] && {
+    echo "Error: Parameters should be in 1, 2, 3, ."
+    echo "****************************************************"
+    fn_errorinfo
+    exit 1
+  }
+
+  [[ ! (${serv} -eq 1 || ${serv} -eq 10) ]] && {
+    echo "Error: Server must be 1 or 10."
+    echo "****************************************************"
+    fn_errorinfo
+    exit 1
+  }
+}
+function fn_connect {
+  cmd="sshpass -p '🙃' ssh -p ${jump_port} -N -f -L localhost:${local_port}:${ss[$serv]}:${remote_port} liucj@211.67.31.242"
+  echo ${cmd}
+  echo "****************************************************"
+  eval ${cmd}
+  exit 0
+}
+function main {
+  fn_usage
+  fn_connect
+}
+
+main
