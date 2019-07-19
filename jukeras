@@ -68,7 +68,7 @@ function dn {
 	if [ ${param} -eq 2 ]
 	then
 		c="Jukeras-${port}"
-		if [[ ${cs[@]} =~ ${port} ]] 
+		if [[ ${cs[@]} =~ ${port} ]]
 		then
 			docker container stop ${c}
 			echo "Container ${c} is stopped"
@@ -133,7 +133,7 @@ function rmi {
 		echo "Notice: Input valid Jukeras image."
 		exit 1
 	fi
-	 
+
 }
 
 
