@@ -4,15 +4,31 @@
 # @DATE: 2019-07-12 00:18:08
 # @DESCRIPTION: jrocker connect through jump Guo4
 
+# IP LIST
+ipfile=${HOME}/.ssh/known_iplist
+
+[[ ! -s ${ipfile} ]] && {
+  echo "Error: ${ipfile} does not exist."
+  exit 1
+}
+
+# check the mode of known_iplist
+[[ $(stat -f "%OLp" ${ipfile}) -ne 600 ]] && {
+  echo "Warning: The mode of file ${ipfile} is not 700. chmod 600 for ${ipfile}."
+  chmod 600 ${ipfile}
+}
+
+# load ipmaps
+declare -a ipmaps
+declare -a servernames
+readarray known_ips < ${ipfile}
+
 param=$#
-serv=$1
+server=$1
 
-jump_port=3000
 remote_port=${2:-8686}
-local_port=${3:-${remote_port}}
+local_port=${3:-8686}
 
-ss[1]=211.67.31.246
-ss[10]=211.67.31.243
 
 function fn_errorinfo {
   echo "Usage:"
@@ -24,6 +40,7 @@ function fn_errorinfo {
   echo "    example3:"
   echo "    jrc 1 8686 9696."
 }
+
 function fn_usage {
     [[ ${param} -lt 1 || ${param} -gt 3 ]] && {
     echo "Error: Parameters should be in 1, 2, 3, ."
@@ -32,22 +49,47 @@ function fn_usage {
     exit 1
   }
 
-  [[ ! (${serv} -eq 1 || ${serv} -eq 10) ]] && {
+  [[ ! (${server} -eq 1 || ${server} -eq 10) ]] && {
     echo "Error: Server must be 1 or 10."
     echo "****************************************************"
     fn_errorinfo
     exit 1
   }
 }
+
+function fn_load_iplist {
+  for line in ${known_ips[@]};
+  do
+    line=${line//\~/ }
+    line=(${line})
+    # save ips
+    ipmaps[${line[1]}]=${line[0]}
+    # save server names
+    servernames[${line[1]}]=${line[2]}
+  done
+}
+
+function fn_parse_ip {
+  local ip_str="$1"
+  line=${ip_str//\`/ }
+  echo $line
+}
+
 function fn_connect {
-  cmd="sshpass -p '🙃' ssh -p ${jump_port} -N -f -L localhost:${local_port}:${ss[$serv]}:${remote_port} liucj@211.67.31.242"
+  cmd="sshpass -p '${loginfo[3]}' ssh -p ${jump_proxy[2]} -N -f -L localhost:${local_port}:${loginfo[1]}:${remote_port} ${jump_proxy[0]}@${jump_proxy[1]}"
   echo ${cmd}
   echo "****************************************************"
   eval ${cmd}
   exit 0
 }
+
 function main {
   fn_usage
+  # load ip list
+  fn_load_iplist
+  jump_proxy=($(fn_parse_ip ${ipmaps[4]}))
+  loginfo=($(fn_parse_ip ${ipmaps[$server]}))
+
   fn_connect
 }
 
