@@ -21,7 +21,7 @@ function usage {
 		echo "	bash gdc_download.sh manifest.csv parallel_number(default 20)"
 		exit 1
 	fi
-	
+
 	if [ ! -f $manifest ]; then
 		echo "Error: First argument must be manifest file"
 		echo "Usage:"
@@ -35,7 +35,7 @@ manifest=$1
 param=$#
 
 
-# Usage 
+# Usage
 usage
 
 # Make fifo
@@ -55,7 +55,7 @@ while read line;do name=(${line//"\t"/ }); fileID+=(${name[0]}); done < $manifes
 
 # echo ${#fileID[@]}
 
-# All task table with 
+# All task table with
 Total=${#fileID[@]}
 for (( i=0; i < $Total; i++ ));
 do
@@ -67,7 +67,7 @@ do
 		gdc-client download ${fileID[i]} -t $token
 		echo "">&6
 	}&
-	
+
 done
 wait
 exec 6>&-
