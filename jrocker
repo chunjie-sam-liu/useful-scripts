@@ -52,23 +52,33 @@ function cpf {
 	done
 }
 
+function lnf {
+	d=$1
+	for i in `find /home/liucj -mindepth 1 -prune -type f -name '.*'`;
+	do
+		name=`basename ${i}`
+		[[ ${name} =~ '.rstudio' ]] && continue
+		[[ ${name} =~ '.vscode' ]] && continue
+		cmd="ln ${i} ${d}/${name}"
+		eval ${cmd}
+	done
+}
+
 function up {
-	cs=(`docker ps -a|grep -o Jrocker.*$`)
+
+	cs=(`docker ps|grep -o Jrocker.*$`)
 	[[ ${cs[@]} =~ "Jrocker-${port}" ]] && echo "Error: Jrocker-${port} exists." && exit 1
 
 	[[ ${port} -lt 8686 ]] && echo "Error: New port should be larger than 8686." && exit 1
 
 	jd=/home/liucj/.rstudio-jrocker/Jrocker-${port}
 
-		[[ ! -d ${jd} ]] \
+	[[ ! -d ${jd} ]] \
 		&& mkdir -p ${jd} \
-		&& cpf ${jd} \
-		&& ln -s /data/liucj ${jd}/data \
-		&& ln -s /project/liucj ${jd}/project \
-		&& ln -s /data/liucj/github ${jd}/github \
-		&& ln -s /data/liucj/R ${jd}/R \
-		&& ln -s /data/liucj/scripts ${jd}/scripts \
-		&& ln -s /data/liucj/tools ${jd}/tools
+		&& lnf ${jd} \
+		&& ln -s /workspace/liucj ${jd}/data \
+		&& ln -s /project/liucj ${jd}/project
+
 
 		docker run -d -p ${port}:8787 \
 		-v ${jd}:/home/liucj/ \
