@@ -78,7 +78,7 @@ function up {
 		-v /data/liucj/scripts/:/home/liucj/scripts/ \
 		-v /data/liucj/tools/:/home/liucj/tools/ \
 		-e USER=🙃 -e PASSWORD=🙃 \
-		-e USERID=$EUID -e GROUPID=$EUID -e ROOT=TRUE \
+		-e USERID=$UID -e GROUPID=$GID -e ROOT=TRUE \
 		--name Jrocker-${port} chunjiesamliu/jrocker:latest
 
 	echo "Start Jrocker successfully with port ${port}."
@@ -89,7 +89,7 @@ function dn {
 	if [ ${param} -eq 2 ]
 	then
 		c="Jrocker-${port}"
-		if [[ ${cs[@]} =~ ${port} ]] 
+		if [[ ${cs[@]} =~ ${port} ]]
 		then
 			docker container stop ${c}
 			echo "Container ${c} is stopped"
@@ -135,7 +135,7 @@ function ex {
 
 	if [[ ${param} -eq 2 && ${cs[@]} =~ ${port} ]]
 	then
-		docker exec -it -u liucj:root -w ~ ${c} bash
+		docker exec -it -u $UID:$GID -w ~ ${c} bash
 	else
 		echo "Notice: Input valid jrocker port."
 		docker ps -a|grep Jrocker
@@ -154,7 +154,7 @@ function rmi {
 		echo "Notice: Input valid jrocker image."
 		exit 1
 	fi
-	 
+
 }
 
 function pull {
