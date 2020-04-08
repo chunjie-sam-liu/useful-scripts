@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# thanks to wulabing original repo.
+
+
 # one key
 wget -N --no-check-certificate -q -O install.sh "https://raw.githubusercontent.com/chunjie-sam-liu/V2Ray-onekey/master/install.sh"
 chmod +x install.sh
