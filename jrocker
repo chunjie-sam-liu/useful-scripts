@@ -78,8 +78,9 @@ function up {
 	[[ ! -d ${jd} ]] \
 		&& mkdir -p ${jd} \
 		&& lnf ${jd} \
-		&& ln -s /workspace/${USER} ${jd}/data \
-		&& ln -s /project/${USER} ${jd}/project
+		&& ln -s /workspace/${USER} ${jd}/workspace \
+		&& ln -s /project/${USER} ${jd}/project \
+		&& ln -s /data/${USER} ${jd}/data
 
 
 		docker run -d -p ${port}:8787 \
