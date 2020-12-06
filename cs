@@ -143,7 +143,7 @@ function fn_copyto {
     exit 1
   }
 
-  cmd="sshpass -p '${loginfo[3]}' rsync -rvz  -e 'ssh -p ${loginfo[2]}' --progress '${src}' ${loginfo[0]}@${loginfo[1]}:${dest} &"
+  cmd="sshpass -p '${loginfo[3]}' rsync -rvz  -e 'ssh -p ${loginfo[2]}' --progress '${src}' ${loginfo[0]}@${loginfo[1]}:${dest} "
   echo "Notice: copy file '${src}' to '${dest}' on server '${servernames[${server}]}'."
   echo ${cmd}
   echo "****************************************************"
@@ -160,7 +160,7 @@ function fn_download {
     exit 1
   }
 
-  cmd="sshpass -p '${loginfo[3]}' rsync -rvz -e 'ssh -p  ${loginfo[2]}' --progress ${loginfo[0]}@${loginfo[1]}:${src} ${dest} &"
+  cmd="sshpass -p '${loginfo[3]}' rsync -rvz -e 'ssh -p  ${loginfo[2]}' --progress ${loginfo[0]}@${loginfo[1]}:${src} ${dest}"
   echo "Notice: download file '${src}' to '${dest}' from server '${servernames[${server}]}'."
   echo ${cmd}
   echo "****************************************************"
