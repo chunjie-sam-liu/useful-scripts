@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# @AUTHOR: Chun-Jie Liu
+# @CONTACT: chunjie.sam.liu.at.gmail.com
+# @DATE: 2020-05-17 10:46:50
+# @DESCRIPTION:
+
+# Number of input parameters
+param=$1
+
+find /home/liucj/github/autophagy-in-cancer \
+    /home/liucj/github/TEP-OV \
+    /home/liucj/github/THPOC-code \
+    /home/liucj/github/EVAtlas-analysis \
+    /home/liucj/github/Deeplatelet \
+    /home/liucj/github/learning-codes \
+    -type f \
+    -name '*R' | xargs grep -i ${param}
