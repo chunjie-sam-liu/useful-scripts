@@ -84,6 +84,7 @@ function up {
 
 
 		docker run -d -p ${port}:8787 \
+		-m 1000g \
 		-v ${jd}:${HOME}/ \
 		-v /workspace/${USER}/:${HOME}/workspace/ \
 		-v /project/${USER}/:${HOME}/project/ \
@@ -93,7 +94,7 @@ function up {
 		-v ${HOME}/tools/:${HOME}/tools/ \
 		-v ${HOME}/github/:${HOME}/github/ \
 		-v ${HOME}/tmp/:${HOME}/tmp/ \
-		-e USER=${USER} -e PASSWORD=u201012670 \
+		-e USER=${USER} -e PASSWORD=🙃 \
 		-e USERID=$UID -e GROUPID=$GID -e ROOT=TRUE \
 		--name ${USER}-rstudio-${port} chunjiesamliu/jrocker:latest
 
