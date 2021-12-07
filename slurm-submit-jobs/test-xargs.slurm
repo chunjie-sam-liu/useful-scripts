@@ -38,5 +38,7 @@ seq -w 1 300 | xargs -I {} --max-procs=$NR_TASKS bash -c "srun --exclusive --nod
 # log into specific node
 # srun --pty  --nodelist=d0806 --partition=v3_64_single bash
 
+# srun --pty  --nodelist=m-2-01 bash
+
 # Show the limits associated with account.
 # sacctmgr show assoc
