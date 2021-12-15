@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
-#SBATCH --time=08:00:00
 #SBATCH --signal=USR2
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=2
-#SBATCH --mem=8192
+#SBATCH --cpus-per-task=24
+#SBATCH --mem=100G
 #SBATCH --output=/home/%u/tmp/errout/jrocker.job.%j
 # customize --output path as appropriate (to a directory readable only by the user!)
 
