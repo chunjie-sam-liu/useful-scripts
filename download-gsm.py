@@ -19,11 +19,11 @@ def geturl(gsm):
 	try:
 		os.mkdir('html')
 	except:
-		print 'exist'
+		print('exist')
 	os.system('wget -O html/%s %s &' %(gsm, url))
 
 def gethtml(gsm):
-	
+
 	f = 'html/' + gsm
 	soup = bs(open(f),'lxml')
 	# print soup.input
@@ -31,7 +31,7 @@ def gethtml(gsm):
 		if 'fulltable' == it['name']:
 			click = it['onclick']
 			downloaddata(click,gsm)
-			
+
 def downloaddata(onclick,gsm):
 	location = onclick.split('\'')[1]
 	url='http://www.ncbi.nlm.nih.gov' + location
@@ -41,19 +41,19 @@ def downloaddata(onclick,gsm):
 	os.system('wget -O result/%s.tmp "%s"' %(gsm, url))
 	os.system('grep -v  "<" result/%s.tmp |grep -v ">" |grep -v "#" |grep -v "GEO Accession viewer"|grep -v ^$ >result/%s' %(gsm, gsm))
 	os.system('rm result/*.tmp')
-	
-	
-	
+
+
+
 def run(f):
 	with open(f, 'r') as foo:
 		for gsm in foo:
 			gsm = gsm.rstrip()
 			geturl(gsm)
 			gethtml(gsm)
-			print 'Done'
-			
-			
-	
+			print('Done')
+
+
+
 
 
 if __name__ =="__main__":
