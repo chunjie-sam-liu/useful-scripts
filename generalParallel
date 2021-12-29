@@ -36,7 +36,7 @@ function usage {
 		echo "Warnings: Your THREADS is $threads"
 		echo "Warnings: Be careful! Your THREADS EXCEED 20!!!"
 	fi
-	
+
 
 }
 
@@ -63,11 +63,12 @@ do
 		cmd=${cmd%%&}
 		echo "Notice - Your are running $cmd"
 		eval $cmd
+		# echo $cmd
 		echo "Success - $cmd was done!!!"
 		echo "" >&6
 	}&
 done
-wait 
+wait
 exec 6>&-
 
 echo "Success: The whole process is done!!!"
