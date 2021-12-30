@@ -44,7 +44,7 @@ function usage {
 usage
 
 # Make fifo file
-pipe='/tmp/$$.fifo'
+pipe="${HOME}/tmp/$$.fifo"
 mkfifo $pipe
 exec 6<>$pipe
 rm -rf $pipe
