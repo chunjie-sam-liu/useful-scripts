@@ -46,8 +46,8 @@ sbatch << EOF
 #SBATCH --nodes=${nodes}
 #SBATCH --ntasks=${ntasks}
 #SBATCH --ntasks-per-node=${ntasks_per_node}
-#SBATCH --output=/home/liuc9/tmp/errout/${name}.%j.out
-#SBATCH --error=/home/liuc9/tmp/errout/${name}.%j.err
+#SBATCH --output=${HOME}/tmp/errout/${name}.%j.out
+#SBATCH --error=${HOME}/tmp/errout/${name}.%j.err
 #SBATCH --mail-user=chunjie.sam.liu@gmail.com
 
 while read line;
