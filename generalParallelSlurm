@@ -53,7 +53,7 @@ sbatch << EOF
 while read line;
 do
   cmd="srun --exclusive --nodes 1 --ntasks 1 \${line} &"
-  echo \${cmd}
+  # echo \${cmd}
   eval \${cmd}
 done < $script
 wait
