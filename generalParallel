@@ -61,15 +61,13 @@ do
 	read -u6
 	{
 		cmd=${cmd%%&}
-		echo "Notice - Your are running $cmd"
+		echo "Notice - Your are running $cmd on the $HOSTNAME"
 		eval $cmd
-		# echo $cmd
-		echo "Success - $cmd was done!!!"
+		echo "Success - $cmd was done!!! on the $HOSTNAME"
 		echo "" >&6
 	}&
 done
 wait
 exec 6>&-
 
-echo "Success: The whole process is done!!!"
 
