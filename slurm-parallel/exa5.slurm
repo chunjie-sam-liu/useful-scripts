@@ -13,4 +13,4 @@
 #SBATCH --cpus-per-task=5
 
 
-srun --ntasks 1 bash /home/liuc9/github/useful-scripts/generalParallel /home/liuc9/github/useful-scripts/slurm-parallel/scriptfile.sh 500
+/home/liuc9/github/useful-scripts/generalParallel /home/liuc9/github/useful-scripts/slurm-parallel/scriptfile.sh 500
