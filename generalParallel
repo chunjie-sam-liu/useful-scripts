@@ -70,4 +70,5 @@ done
 wait
 exec 6>&-
 
+wait
 
