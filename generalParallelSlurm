@@ -46,7 +46,7 @@ sbatch << EOF
 #SBATCH --nodes=${nodes}
 #SBATCH --ntasks=${ntasks}
 #SBATCH --ntasks-per-node=${ntasks_per_node}
-#SBATCH --cpus-per-task=2
+#SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=5G
 #SBATCH --time=120:00:00
 #SBATCH --output=${HOME}/tmp/errout/${name}.%j.out
