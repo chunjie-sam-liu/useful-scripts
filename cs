@@ -19,6 +19,7 @@ ipfile=${HOME}/.ssh/known_iplist
   chmod 600 ${ipfile}
 }
 
+
 # load ipmaps
 declare -a ipmaps
 declare -a servernames
