@@ -72,5 +72,6 @@ singularity exec --cleanenv ${HOME}/sif/jrocker_latest.sif \
             --auth-pam-helper-path=pam-helper \
             --auth-stay-signed-in-days=30 \
             --auth-timeout-minutes=0 \
+            --server-user=${SINGULARITYENV_USER} \
             --rsession-path=/etc/rstudio/rsession.sh
 printf 'rserver exited' 1>&2
