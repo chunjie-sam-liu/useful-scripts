@@ -25,7 +25,7 @@ END
 # personal libraries from any R installation in the host environment
 
 cat > ${workdir}/rsession.sh <<END
-#!/usr/bin/env bash
+#!/bin/sh
 export OMP_NUM_THREADS=${SLURM_JOB_CPUS_PER_NODE}
 export R_LIBS_USER=${HOME}/R/jrocker
 exec rsession "\${@}"
@@ -72,6 +72,5 @@ singularity exec --cleanenv ${HOME}/sif/jrocker_latest.sif \
             --auth-pam-helper-path=pam-helper \
             --auth-stay-signed-in-days=30 \
             --auth-timeout-minutes=0 \
-            --server-user=${SINGULARITYENV_USER} \
             --rsession-path=/etc/rstudio/rsession.sh
 printf 'rserver exited' 1>&2
