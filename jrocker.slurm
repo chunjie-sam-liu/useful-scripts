@@ -67,7 +67,7 @@ When done using RStudio Server, terminate the job by:
 END
 
 singularity exec --cleanenv ${HOME}/sif/jrocker_latest.sif \
-    rserver --www-port ${PORT} \
+   rserver --www-port ${PORT} \
             --auth-none=0 \
             --auth-pam-helper-path=pam-helper \
             --auth-stay-signed-in-days=30 \
