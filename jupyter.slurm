@@ -12,6 +12,7 @@ USER=$(id -un)
 PASSWORD=$(openssl rand -base64 15)
 
 readonly PORT=$(python -c 'import socket; s=socket.socket(); s.bind(("", 0)); print(s.getsockname()[1]); s.close()')
+PORT=22222
 cat 1>&2 <<END
 1. SSH tunnel from your workstation using the following command:
 
