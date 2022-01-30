@@ -49,9 +49,9 @@ readonly PORT=$(python -c 'import socket; s=socket.socket(); s.bind(("", 0)); pr
 cat 1>&2 <<END
 1. SSH tunnel from your workstation using the following command:
 
-   ssh -N -L 8787:${HOSTNAME}:${PORT} ${SINGULARITYENV_USER}@hpc
+   ssh -N -L ${PORT}:${HOSTNAME}:${PORT} ${SINGULARITYENV_USER}@hpc
 
-   and point your web browser to http://localhost:8787
+   and point your web browser to http://localhost:${PORT}
 
 2. log in to RStudio Server using the following credentials:
 
