@@ -7,11 +7,11 @@
 # Number of input parameters
 param=$1
 
-find /home/liucj/github/autophagy-in-cancer \
-    /home/liucj/github/TEP-OV \
-    /home/liucj/github/THPOC-code \
-    /home/liucj/github/EVAtlas-analysis \
-    /home/liucj/github/Deeplatelet \
-    /home/liucj/github/learning-codes \
+find ${HOME}/github/autophagy-in-cancer \
+    ${HOME}/github/TEP-OV \
+    ${HOME}/github/THPOC-code \
+    ${HOME}/github/EVAtlas-analysis \
+    ${HOME}/github/Deeplatelet \
+    ${HOME}/github/learning-codes \
     -type f \
     -name '*R' | xargs grep -i ${param}
