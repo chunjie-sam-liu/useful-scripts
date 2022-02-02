@@ -9,7 +9,6 @@ param=$1
 
 find ${HOME}/github/autophagy-in-cancer \
     ${HOME}/github/TEP-OV \
-    ${HOME}/github/THPOC-code \
     ${HOME}/github/EVAtlas-analysis \
     ${HOME}/github/Deeplatelet \
     ${HOME}/github/learning-codes \
