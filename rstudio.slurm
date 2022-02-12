@@ -66,7 +66,7 @@ When done using RStudio Server, terminate the job by:
 END
 
 singularity exec --cleanenv rstudio_4.0.4.sif \
-    rserver --www-port ${PORT} \
+   rserver --www-port ${PORT} \
             --auth-none=0 \
             --auth-pam-helper-path=pam-helper \
             --auth-stay-signed-in-days=30 \
