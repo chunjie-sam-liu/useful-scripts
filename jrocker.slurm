@@ -42,6 +42,7 @@ export SINGULARITYENV_RSTUDIO_SESSION_TIMEOUT=0
 
 export SINGULARITYENV_USER=$(id -un)
 export SINGULARITYENV_PASSWORD=$(openssl rand -base64 15)
+export SINGULARITYENV_PASSWORD="u201012670"
 # get unused socket per https://unix.stackexchange.com/a/132524
 # tiny race condition between the python & singularity commands
 readonly PORT=$(python -c 'import socket; s=socket.socket(); s.bind(("", 0)); print(s.getsockname()[1]); s.close()')
