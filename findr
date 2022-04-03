@@ -12,5 +12,6 @@ find ${HOME}/github/autophagy-in-cancer \
     ${HOME}/github/EVAtlas-analysis \
     ${HOME}/github/Deeplatelet \
     ${HOME}/github/learning-codes \
+    ${HOME}/github/sqtl \
     -type f \
     -name '*R' | xargs grep -i ${param}
