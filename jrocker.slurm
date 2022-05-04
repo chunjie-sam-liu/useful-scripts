@@ -27,7 +27,7 @@ END
 cat > ${workdir}/rsession.sh <<END
 #!/bin/sh
 export OMP_NUM_THREADS=${SLURM_JOB_CPUS_PER_NODE}
-export R_LIBS_USER=${HOME}/R/jrocker/4.1
+export R_LIBS_USER=${HOME}/R/jrocker/4.2
 exec rsession "\${@}"
 END
 
