@@ -30,7 +30,8 @@ lftp -u "$USER","$PASSWORD" $HOST <<EOF
 # set ssl:verify-certificate no
 # transfer starts now...
 set sftp:auto-confirm yes
-mirror --use-pget-n=10 $REMOTE_DIR $LOCAL_DIR;
+mirror -R --use-pget-n=10 $REMOTE_DIR $LOCAL_DIR;
+mirror -R --use-pget-n=10 $LOCAL_DIR $REMOTE_DIR;
 exit
 EOF
 echo
