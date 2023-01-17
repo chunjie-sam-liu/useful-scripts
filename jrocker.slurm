@@ -1,10 +1,10 @@
 #!/bin/sh
 #SBATCH --signal=USR2
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=32
-#SBATCH --mem=300G
+#SBATCH --cpus-per-task=20
+#SBATCH --mem=80G
 #SBATCH --time=720:00:00
-#SBATCH --output=/home/%u/tmp/errout/jrocker.job.%j
+#SBATCH --output=/home/%u/tmp/errout/jrocker/jrocker.job.%j
 # customize --output path as appropriate (to a directory readable only by the user!)
 
 # Create temporary directory to be populated with directories to bind-mount in the container
@@ -33,7 +33,7 @@ END
 
 chmod +x ${workdir}/rsession.sh
 
-export SINGULARITY_BIND="${workdir}/run:/run,${workdir}/tmp:/tmp,${workdir}/database.conf:/etc/rstudio/database.conf,${workdir}/rsession.sh:/etc/rstudio/rsession.sh,${workdir}/var/lib/rstudio-server:/var/lib/rstudio-server,/scr1/users/liuc9:/scr1/users/liuc9,/mnt/isilon/xing_lab/liuc9:/mnt/isilon/xing_lab/liuc9"
+export SINGULARITY_BIND="${workdir}/run:/run,${workdir}/tmp:/tmp,${workdir}/database.conf:/etc/rstudio/database.conf,${workdir}/rsession.sh:/etc/rstudio/rsession.sh,${workdir}/var/lib/rstudio-server:/var/lib/rstudio-server,/scr1/users/liuc9:/scr1/users/liuc9,/mnt/isilon/xing_lab/liuc9:/mnt/isilon/xing_lab/liuc9,/mnt/isilon/xing_lab/aspera:/mnt/isilon/xing_lab/aspera"
 
 # Do not suspend idle sessions.
 # Alternative to setting session-timeout-minutes=0 in /etc/rstudio/rsession.conf
