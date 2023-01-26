@@ -28,7 +28,7 @@ cat > ${workdir}/rsession.sh <<END
 #!/bin/sh
 export OMP_NUM_THREADS=${SLURM_JOB_CPUS_PER_NODE}
 export R_LIBS_USER=${HOME}/R/jrocker/4.2
-exec rsession "\${@}"
+exec /usr/lib/rstudio-server/bin/rsession "\${@}"
 END
 
 chmod +x ${workdir}/rsession.sh
@@ -67,11 +67,11 @@ When done using RStudio Server, terminate the job by:
 END
 
 singularity exec --cleanenv ${HOME}/sif/jrocker_latest.sif \
-   rserver --www-port ${PORT} \
-            --auth-none=0 \
-            --auth-pam-helper-path=pam-helper \
-            --auth-stay-signed-in-days=30 \
-            --auth-timeout-minutes=0 \
-            --server-user=${SINGULARITYENV_USER} \
-            --rsession-path=/etc/rstudio/rsession.sh
+   /usr/lib/rstudio-server/bin/rserver --www-port ${PORT} \
+   --auth-none=0 \
+   --auth-pam-helper-path=pam-helper \
+   --auth-stay-signed-in-days=30 \
+   --auth-timeout-minutes=0 \
+   --server-user=${SINGULARITYENV_USER} \
+   --rsession-path=/etc/rstudio/rsession.sh
 printf 'rserver exited' 1>&2
