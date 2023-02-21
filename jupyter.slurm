@@ -4,21 +4,21 @@
 #SBATCH --cpus-per-task=50
 #SBATCH --mem=300G
 #SBATCH --time=720:00:00
-#SBATCH --output=/home/%u/tmp/errout/jupyter.job.%j
+#SBATCH --output=/home/%u/tmp/errout/jrocker/jupyter.job.%j
 # customize --output path as appropriate (to a directory readable only by the user!)
 
-
+source ~/tools/anaconda3/bin/activate
 USER=$(id -un)
 PASSWORD=$(openssl rand -base64 15)
 
 readonly PORT=$(python -c 'import socket; s=socket.socket(); s.bind(("", 0)); print(s.getsockname()[1]); s.close()')
-PORT=22222
+# PORT=22222
 cat 1>&2 <<END
 1. SSH tunnel from your workstation using the following command:
 
-  ssh -N -L 22222:${HOSTNAME}:${PORT} ${USER}@hpc
+  ssh -N -L ${PORT}:${HOSTNAME}:${PORT} ${USER}@hpc
 
-  and point your web browser to http://localhost:22222
+  and point your web browser to http://${HOSTNAME}:22222/lab
 
 2. log in to Jupyter Server using the following credentials:
 
@@ -33,4 +33,4 @@ When done using RStudio Server, terminate the job by:
       scancel -f ${SLURM_JOB_ID}
 END
 
-jupyter lab
+jupyter lab --ip 0.0.0.0 --port 9999 --no-browser
