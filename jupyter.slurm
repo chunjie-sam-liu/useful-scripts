@@ -33,4 +33,4 @@ When done using RStudio Server, terminate the job by:
       scancel -f ${SLURM_JOB_ID}
 END
 
-jupyter lab --ip 0.0.0.0 --port 9999 --no-browser
+jupyter lab --ip 0.0.0.0 --port ${PORT} --no-browser
