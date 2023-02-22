@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #SBATCH --signal=USR2
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=50
-#SBATCH --mem=300G
+#SBATCH --cpus-per-task=20
+#SBATCH --mem=50G
 #SBATCH --time=720:00:00
 #SBATCH --output=/home/%u/tmp/errout/jrocker/jupyter.job.%j
 # customize --output path as appropriate (to a directory readable only by the user!)
@@ -18,7 +18,7 @@ cat 1>&2 <<END
 
   ssh -N -L ${PORT}:${HOSTNAME}:${PORT} ${USER}@hpc
 
-  and point your web browser to http://${HOSTNAME}:22222/lab
+  and point your web browser to http://${HOSTNAME}:${PORT}/lab
 
 2. log in to Jupyter Server using the following credentials:
 
@@ -33,4 +33,4 @@ When done using RStudio Server, terminate the job by:
       scancel -f ${SLURM_JOB_ID}
 END
 
-jupyter lab --ip 0.0.0.0 --port ${PORT} --no-browser
+jupyter lab --ip 0.0.0.0 --port ${PORT} --no-browser --notebook-dir=/home/liuc9
