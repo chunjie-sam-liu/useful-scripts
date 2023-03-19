@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #SBATCH --signal=USR2
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=20
-#SBATCH --mem=50G
+#SBATCH --cpus-per-task=50
+#SBATCH --mem=300G
 #SBATCH --time=720:00:00
 #SBATCH --output=/home/%u/tmp/errout/jrocker/jupyter.job.%j
 # customize --output path as appropriate (to a directory readable only by the user!)
@@ -29,6 +29,8 @@ When done using RStudio Server, terminate the job by:
 
 1. Exit the Jupyter Session ("power" button in the top right corner of the RStudio window)
 2. Issue the following command on the login node:
+
+jupyter lab --ip 0.0.0.0 --port ${PORT} --no-browser --notebook-dir=/home/liuc9
 
       scancel -f ${SLURM_JOB_ID}
 END
