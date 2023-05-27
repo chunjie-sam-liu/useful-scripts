@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# @AUTHOR: Chun-Jie Liu
+# @CONTACT: chunjie.sam.liu.at.gmail.com
+# @DATE: 2023-05-12 21:09:24
+# @DESCRIPTION:
+
+# Number of input parameters
+errout_dir="/home/liuc9/tmp/errout/jrocker"
+
+for j in $(ls ${errout_dir}/jupyter.*); do
+  cmd="grep -i 'lab?token' ${j}|grep -v ServerApp|sed -e s/or//"
+  # echo ${cmd}
+  out=$(eval ${cmd})
+  echo "${out}"
+done
