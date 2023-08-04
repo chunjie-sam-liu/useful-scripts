@@ -8,7 +8,7 @@
 errout_dir="/home/liuc9/tmp/errout/jrocker"
 
 for j in $(ls ${errout_dir}/jupyter.*); do
-  cmd="grep -i 'lab?token' ${j}|grep -v ServerApp|sed -e s/or//"
+  cmd="grep -i 'lab?token' ${j}|grep -v ServerApp|sed -e s/or//|sed 's/ //g'|sed -e s/127.0.0.1/localhost/g"
   # echo ${cmd}
   out=$(eval ${cmd})
   echo "${out}"
