@@ -16,17 +16,17 @@ import argparse
 
 def usage():
 	description = '''
-	Problem: 
+	Problem:
 		I choose project BRCA on GDC(https://gdc-portal.nci.nih.gov/projects/t) and forward to WXS(1,050 cases, 2,175 bam files). Download manifest file from the summary tab. In fact the manifest only contains the file_id, file_name and md5. I can't tell sample information like TCGA barcode. On the Files tab in the search result of GDC-Portal, we can download sample information in form of json in some condition. However, I can't get sample information from the BRCA-WXS json file. Use GDC-API files endpoint.
-	Task: 
+	Task:
 		Map file_id to sample sample id through GDC-API (https://gdc-docs.nci.nih.gov/API/Users_Guide/Search_and_Retrieval/#filters-specifying-the-quer
 	'''
 	usage = """%(prog)s -i <manifest.txt>"""
 	parser = argparse.ArgumentParser(description = description, usage = usage)
-	
+
 	parser.add_argument("-i", "--input", dest = 'manifest', type = str, help = "Input manifest file downloaded from gdc-portal or file contains first column as file_id", required = True)
 	parser.add_argument('-v','--version',action='version', version='%(prog)s 1.0')
-	
+
 	args = parser.parse_args()
 	return args
 
@@ -53,21 +53,21 @@ def makeParams(file_ids):
 	"size":len(file_ids)
 	}
 	return params
-	
+
 def gdcAPI(file_ids, manifest):
 	output = manifest + '.map2submitterID'
 	outputh = open(output, 'w')
-	files_endpt = "https://gdc-api.nci.nih.gov/files"
+	files_endpt = "https://api.gdc.cancer.gov/files"
 	params = makeParams(file_ids)
 	response = requests.post(files_endpt, json = params)
 	outputh.write(response.text)
 	outputh.close()
 	# print(response.text)
-	
+
 def run(manifest):
 	file_ids = loadManifest(manifest)
 	gdcAPI(file_ids, manifest)
-	
+
 def main():
 	args = usage()
 	run(args.manifest)

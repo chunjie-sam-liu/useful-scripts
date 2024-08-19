@@ -12,7 +12,7 @@
 workdir=$(python -c 'import tempfile;from pathlib import Path; print(tempfile.mkdtemp(prefix="jrocker_", dir=str(Path.home()/"tmp/tmp")))')
 
 mkdir -p -m 700 ${workdir}/run ${workdir}/tmp ${workdir}/var/lib/rstudio-server
-cat > ${workdir}/database.conf <<END
+cat >${workdir}/database.conf <<END
 provider=sqlite
 directory=/var/lib/rstudio-server
 END
@@ -24,7 +24,7 @@ END
 # Set R_LIBS_USER to a path specific to rocker/rstudio to avoid conflicts with
 # personal libraries from any R installation in the host environment
 
-cat > ${workdir}/rsession.sh <<END
+cat >${workdir}/rsession.sh <<END
 #!/bin/sh
 export OMP_NUM_THREADS=${SLURM_JOB_CPUS_PER_NODE}
 export R_LIBS_USER=${HOME}/R/jrocker/4.2
@@ -33,7 +33,7 @@ END
 
 chmod +x ${workdir}/rsession.sh
 
-export SINGULARITY_BIND="${workdir}/run:/run,${workdir}/tmp:/tmp,${workdir}/database.conf:/etc/rstudio/database.conf,${workdir}/rsession.sh:/etc/rstudio/rsession.sh,${workdir}/var/lib/rstudio-server:/var/lib/rstudio-server,/scr1/users/liuc9:/scr1/users/liuc9,/mnt/isilon/xing_lab/liuc9:/mnt/isilon/xing_lab/liuc9,/mnt/isilon/xing_lab/aspera:/mnt/isilon/xing_lab/aspera"
+export SINGULARITY_BIND="${workdir}/run:/run,${workdir}/tmp:/tmp,${workdir}/database.conf:/etc/rstudio/database.conf,${workdir}/rsession.sh:/etc/rstudio/rsession.sh,${workdir}/var/lib/rstudio-server:/var/lib/rstudio-server,/scr1/users/liuc9:/scr1/users/liuc9,/mnt/isilon/xing_lab/liuc9:/mnt/isilon/xing_lab/liuc9,/mnt/isilon/xing_lab/aspera:/mnt/isilon/xing_lab/aspera,/mnt/isilon/u01_project:/mnt/isilon/u01_project"
 
 # Do not suspend idle sessions.
 # Alternative to setting session-timeout-minutes=0 in /etc/rstudio/rsession.conf
@@ -57,6 +57,7 @@ cat 1>&2 <<END
 
    user: ${SINGULARITYENV_USER}
    password: ${SINGULARITYENV_PASSWORD}
+   workdir: ${workdir}
 
 When done using RStudio Server, terminate the job by:
 
