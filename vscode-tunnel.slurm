@@ -7,4 +7,4 @@
 #SBATCH --output=/home/%u/tmp/errout/jrocker/vscode.job.%j
 # customize --output path as appropriate (to a directory readable only by the user!)
 
-code tunnel --random-name --no-sleep
+code tunnel --random-name --no-sleep --accept-server-license-terms
