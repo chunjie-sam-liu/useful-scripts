@@ -6,10 +6,9 @@
 
 errout_dir="/home/liuc9/tmp/errout/jrocker"
 
-for j in `ls ${errout_dir}`
-do
-  cmd="grep -i 'ssh -N -L' ${errout_dir}/${j}"
-  # echo ${cmd}
-  out=`eval ${cmd}`
-  echo "${out} &"
+for j in $(ls ${errout_dir}/j*er.job.*); do
+  suffix=$(basename ${j})
+  cmd="grep -i 'ssh -N -L' ${j}"
+  out=$(eval ${cmd})
+  echo "${out} & # ${suffix}"
 done
