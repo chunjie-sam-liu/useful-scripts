@@ -3,15 +3,22 @@
 #SBATCH --signal=USR2
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=50
-#SBATCH --mem=100G
+#SBATCH --mem=300G
 #SBATCH --time=1080:00:00
 #SBATCH --output=/home/%u/tmp/errout/jrocker/vsc-tunnel.job.%j
 # customize --output path as appropriate (to a directory readable only by the user!)
 
 source ~/tools/anaconda3/bin/activate
+
+TEMPDIR=/scr1/users/liuc9/tmp/errout/vsc-tunnel
 MACHINENAME=$(uuidgen | cut -d"-" -f1)
+DATADIR=${TEMPDIR}/${MACHINENAME}
 
 echo $MACHINENAME
-# code tunnel --random-name --no-sleep --accept-server-license-terms
+echo $DATADIR
 
-code tunnel user login --provider github && code tunnel --name ${MACHINENAME} --no-sleep --accept-server-license-terms
+code tunnel user login --provider github &&
+  code tunnel --name ${MACHINENAME} \
+    --cli-data-dir ${DATADIR} \
+    --no-sleep \
+    --accept-server-license-terms

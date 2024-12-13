@@ -1,8 +1,8 @@
 #!/bin/sh
 #SBATCH --signal=USR2
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=50
-#SBATCH --mem=300G
+#SBATCH --cpus-per-task=30
+#SBATCH --mem=80G
 #SBATCH --time=1080:00:00
 #SBATCH --output=/home/%u/tmp/errout/jrocker/jrocker.job.%j
 # customize --output path as appropriate (to a directory readable only by the user!)
