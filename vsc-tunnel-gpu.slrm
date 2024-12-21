@@ -5,20 +5,23 @@
 #SBATCH --partition=gpuq
 #SBATCH --mem=80G
 #SBATCH --time=120:00:00
-#SBATCH --output=/home/%u/tmp/errout/jrocker/vsc-gpu-tunnel.job.%j
+#SBATCH --output=/home/%u/tmp/errout/jrocker/vsc-tunnel-gpu.job.%j
 # customize --output path as appropriate (to a directory readable only by the user!)
 
 source ~/tools/anaconda3/bin/activate
 
+TYPE=GPU
 TEMPDIR=/scr1/users/liuc9/tmp/errout/vsc-tunnel
 MACHINENAME=$(uuidgen | cut -d"-" -f1)
-DATADIR=${TEMPDIR}/${MACHINENAME}
 
-echo $MACHINENAME
+MACHINENAME_TYPE=${TYPE}_${MACHINENAME}
+DATADIR=${TEMPDIR}/${MACHINENAME_TYPE}
+
+echo $MACHINENAME_TYPE
 echo $DATADIR
 
 code tunnel user login --provider github &&
-  code tunnel --name ${MACHINENAME} \
+  code tunnel --name ${MACHINENAME_TYPE} \
     --cli-data-dir ${DATADIR} \
     --no-sleep \
     --accept-server-license-terms
