@@ -1,74 +1,152 @@
+#!/usr/bin/env bash
 #########################################################################
-# File Name: parallel.sh
+# File Name: generalParallel
 # Author: C.J. Liu
 # Mail: samliu@hust.edu.cn
 # Created Time: Tue 06 Dec 2016 04:39:49 PM CST
+# Description: Run shell commands in parallel from a command file
 #########################################################################
-#!/usr/bin/env bash
 
-params=$#
-scripts=$1
+# Default values
+DEFAULT_THREADS=20
+MAX_RECOMMENDED_THREADS=50
 
-# Set default threads as 20
-threads=${2:-20}
+# Parse arguments
+command_file="$1"
+num_threads="${2:-$DEFAULT_THREADS}"
 
-echo "Notice: Your did parallel in $threads threads."
-echo ""
+function show_usage() {
+	cat <<EOF
+Usage: generalParallel <command_file> [num_threads]
 
-function usage {
-	Description="Notice: The script aimed at running shell command in general parallel."
-	Usage="Uage:	generalParallel shell_scripts.sh parallel_number(default:20)"
-	ErrorNo="Error:	Number of arguments must be 1 or 2"
-	ErrorScript="Error:	suffix of script file must be sh."
-	if [ "$params" -lt 1 -o "$params" -gt 2 ]; then
-		echo $ErrorNo
-		echo $Description
-		echo $Usage
-		exit 1
-	fi
-	if [ "${scripts#*.}" != "sh" ]; then
-		echo $ErrorScript
-		echo $Description
-		echo $Usage
-		exit 1
-	fi
-	if [ $threads -gt 20 ]; then
-		echo "Warnings: Your THREADS is $threads"
-		echo "Warnings: Be careful! Your THREADS EXCEED 20!!!"
-	fi
+Description:
+    This script runs shell commands in parallel by reading them from a file.
+    Each line in the command file should contain one shell command.
+    Empty lines and lines starting with '#' are ignored.
 
+Arguments:
+    command_file    File containing commands to execute (one per line)
+    num_threads     Number of parallel threads (default: $DEFAULT_THREADS)
 
+Examples:
+    generalParallel commands.txt
+    generalParallel my_tasks.sh 10
+    generalParallel job_list.txt 30
+EOF
 }
 
-# Usage
-usage
+function validate_arguments() {
+	# Check number of arguments
+	if [ $# -lt 1 ] || [ $# -gt 2 ]; then
+		echo "Error: Invalid number of arguments"
+		show_usage
+		exit 1
+	fi
 
-# Make fifo file
-pipe="${HOME}/tmp/$$.fifo"
-mkfifo $pipe
-exec 6<>$pipe
-rm -rf $pipe
+	# Check if command file exists
+	if [ ! -f "$command_file" ]; then
+		echo "Error: Command file '$command_file' not found"
+		exit 1
+	fi
 
-[[ $threads -gt 20 ]] && echo "Warnings: Your THREADS is $threads" && echo "Warnings: Be careful! Your THREADS EXCEED 20!!!"
+	# Check if command file is readable
+	if [ ! -r "$command_file" ]; then
+		echo "Error: Command file '$command_file' is not readable"
+		exit 1
+	fi
 
-for (( i=0; i<$threads; i++ ))
-do
-	echo ""
-done >&6
+	# Validate thread count
+	if ! [[ "$num_threads" =~ ^[0-9]+$ ]] || [ "$num_threads" -lt 1 ]; then
+		echo "Error: Number of threads must be a positive integer"
+		exit 1
+	fi
 
-cat $scripts | while read cmd
-do
-	read -u6
-	{
-		cmd=${cmd%%&}
-		echo "Notice - Your are running $cmd on the $HOSTNAME"
-		eval $cmd
-		echo "Success - $cmd was done!!! on the $HOSTNAME"
-		echo "" >&6
-	}&
-done
-wait
-exec 6>&-
+	# Warning for high thread count
+	if [ "$num_threads" -gt "$MAX_RECOMMENDED_THREADS" ]; then
+		echo "Warning: Thread count ($num_threads) is quite high. Consider using fewer threads to avoid system overload."
+	fi
+}
 
-wait
+function setup_job_control() {
+	# Create temporary directory and FIFO for job control
+	local tmp_dir="${HOME}/tmp"
+	mkdir -p "$tmp_dir"
 
+	job_pipe="${tmp_dir}/parallel_$$.fifo"
+	mkfifo "$job_pipe"
+	exec 6<>"$job_pipe"
+	rm -f "$job_pipe"
+
+	# Initialize job slots (semaphore pattern)
+	for ((i = 0; i < num_threads; i++)); do
+		echo "slot" >&6
+	done
+}
+
+function cleanup() {
+	exec 6>&- 2>/dev/null
+	rm -f "$job_pipe" 2>/dev/null
+}
+
+function run_parallel_jobs() {
+	local job_count=0
+	local line_number=0
+
+	echo "Processing commands from: $command_file"
+	echo "Using $num_threads parallel threads"
+	echo "Started at: $(date)"
+	echo "----------------------------------------"
+
+	while IFS= read -r command || [ -n "$command" ]; do
+		((line_number++))
+
+		# Skip empty lines and comments
+		if [[ -z "$command" || "$command" =~ ^[[:space:]]*# ]]; then
+			continue
+		fi
+
+		# Wait for an available job slot
+		read -u6
+
+		# Run command in background
+		{
+			# Remove trailing & if present
+			command="${command%&}"
+			command="${command## }" # Remove leading spaces
+
+			echo "[$(date +%T)] Line $line_number: Starting: $command"
+
+			if eval "$command"; then
+				echo "[$(date +%T)] Line $line_number: ✓ Completed: $command"
+			else
+				echo "[$(date +%T)] Line $line_number: ✗ Failed: $command"
+			fi
+
+			# Release job slot
+			echo "slot" >&6
+		} &
+
+		((job_count++))
+	done <"$command_file"
+
+	# Wait for all background jobs to complete
+	wait
+
+	echo "----------------------------------------"
+	echo "All jobs completed at: $(date)"
+	echo "Total commands processed: $job_count"
+}
+
+# Main execution
+trap cleanup EXIT
+
+# Validate input
+validate_arguments "$@"
+
+# Setup parallel job control
+setup_job_control
+
+# Run the parallel jobs
+run_parallel_jobs
+
+echo "Parallel execution finished successfully"

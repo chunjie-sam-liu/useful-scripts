@@ -21,7 +21,8 @@ echo $MACHINENAME_TYPE
 echo $DATADIR
 
 code tunnel user login --provider github &&
-  code tunnel --name ${MACHINENAME_TYPE} \
-    --cli-data-dir ${DATADIR} \
+  code tunnel \
     --no-sleep \
-    --accept-server-license-terms
+    --name ${MACHINENAME_TYPE} \
+    --accept-server-license-terms \
+    --cli-data-dir ${DATADIR}
