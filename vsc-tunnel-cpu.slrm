@@ -8,12 +8,16 @@
 #SBATCH --output=/home/%u/tmp/errout/jrocker/vsc-tunnel-cpu.job.%j
 # customize --output path as appropriate (to a directory readable only by the user!)
 
-if [ -f ${HOME}/.bashrc ]; then
-  source ${HOME}/.bashrc
+if [ -f "${HOME}/.bashrc" ]; then
+  source "${HOME}/.bashrc"
 fi
 
 source ~/tools/anaconda3/bin/activate
 
+unset NODE_PATH
+unset NODE_OPTIONS
+
+export TMPDIR=$HOME/tmp
 TYPE=CPU
 TEMPDIR=/scr1/users/liuc9/tmp/errout/vsc-tunnel
 MACHINENAME=$(uuidgen | cut -d"-" -f1)
