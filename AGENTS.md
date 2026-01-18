@@ -1,80 +1,108 @@
 # AGENTS.md: Repository-Specific Instructions for Agents
 
-This file defines how agentic tools should work in this repo. It replaces prior defaults and is tailored to the current codebase.
+This file guides agentic coding agents operating in this repository.
+Scope: `/Users/liuc9/github/useful-scripts` and subdirectories.
 
 ---
 
 ## 1. Build, Lint, Test, and Verification Commands
 
 ### Observed Tooling
-- No `package.json`, `pyproject.toml`, `Makefile`, or other build/test configs found.
-- No lint or formatter configs (`.eslintrc`, `.prettierrc`, `.editorconfig`, etc.) found.
-- CI workflow is a placeholder and does not run tests.
+- No centralized build system found (`Makefile`, `package.json`, `pyproject.toml`, etc.).
+- No repo-wide lint/formatter config found (`.editorconfig`, `.eslintrc`, `.prettierrc`, `ruff.toml`, etc.).
+- Repo is a collection of standalone utilities (bash/sh, Python, R, Perl, AppleScript).
 
-### Verification Guidance (use only when applicable)
-- **Shell scripts**: Prefer manual checks and safe dry runs. If you add shell checks, keep them local and do not assume `shellcheck` or `shfmt` are installed.
-- **Python scripts**: If you add tests or type checks, document the command you ran; otherwise state that no test framework exists.
-- **R / Perl / AppleScript**: Only run commands if the user explicitly asks; otherwise report that no automated test setup is present.
+### Recommended Verification (script-by-script)
+Use the smallest, safest command that exercises parsing/usage.
+
+- **Shell**
+  - Syntax check: `bash -n path/to/script.sh`
+  - Dry-run/usage: `bash path/to/script.sh --help` (only if script supports it)
+
+- **Python**
+  - Syntax check: `python -m py_compile path/to/script.py`
+  - Usage check: `python path/to/script.py --help` (only if script supports it)
+
+- **R**
+  - Parse check: `Rscript -e "parse('path/to/script.R')"`
+
+- **Perl**
+  - Syntax check: `perl -c path/to/script.pl`
+
+- **AppleScript**
+  - Compile check (macOS): `osacompile -o /tmp/out.scpt path/to/script.applescript`
+  - Note: `osacompile` writes to `/tmp`; request approval if sandbox forbids it.
 
 ### Single-Test Command
-- No test harness detected. If you create tests in the future, document the single-test command you add in this section.
+- No test harness exists.
+- When adding tests later, prefer the pattern:
+  - `python -m pytest -q tests/test_<area>.py -k <case>` (only if pytest is added)
 
 ### Failure Handling
-If you run any verification command and it fails:
-1. Stop the task.
-2. Inspect output and fix the issue you introduced.
-3. Re-run the failing command and report results.
+If a verification command fails:
+1. Stop and inspect output.
+2. Fix only issues introduced by your change.
+3. Re-run the same command and report results.
 
 ---
 
 ## 2. Code Style and Conventions
 
 ### 2.1. General Principles
-- Match existing style within the file you modify.
-- Keep changes minimal and focused to the task.
-- Do not introduce new dependencies unless explicitly requested.
-- Avoid refactoring unrelated code while fixing bugs.
+- Treat each script as a standalone artifact; avoid cross-repo refactors.
+- Match existing style within the file you modify (shebang, indentation, naming).
+- Keep changes minimal and localized.
+- Do not add new dependencies/tools unless explicitly requested.
 
-### 2.2. Shell Scripts (`*.sh`)
-- Prefer `#!/usr/bin/env bash` when adding new scripts (do not change existing shebangs).
-- Use `set -euo pipefail` only if the file already follows that pattern.
-- Quote variables unless globbing or word-splitting is intended.
-- Use functions for reusable logic; keep names in `lower_snake_case`.
-- Keep lines under 120 characters when possible.
+### 2.2. Shell Scripts (`*.sh`, `*.bash`)
+Observed: scripts commonly use `#!/bin/bash`, simple inline logic, and minimal strict-mode.
+
+- **Shebang**: Do not change existing shebangs. For new scripts, prefer `#!/usr/bin/env bash`.
+- **Strict mode**: Only add `set -euo pipefail` if the script already uses strict mode or if you’re prepared to fix fallout.
+- **Quoting**: Quote variable expansions (`"$var"`) unless word-splitting/globbing is intended.
+- **Conditionals**: Prefer `[[ ... ]]` in bash scripts.
+- **Loops**: Quote array expansions (`"${arr[@]}"`) unless intentional.
+- **External tools**: Many scripts assume Linux tools (`find`, `awk`, `sed -i`, `lftp`, `nohup`, `zgrep`). If you touch these paths, consider portability and document assumptions.
 
 ### 2.3. Python (`*.py`)
-- Use 2-space indentation only if the file already uses it; otherwise follow existing indentation.
-- Favor explicit variable names over abbreviations.
-- Prefer list/dict comprehensions only when readable.
-- Add type hints where the file already uses them; do not force type hints globally.
-- Avoid `print` unless the script is CLI-oriented or already uses logging/printing.
+Observed: scripts are CLI-oriented, import multiple modules in one line sometimes, and often omit type hints.
+
+- **Python version**: Don’t assume a specific version unless the script indicates it.
+- **Imports**: Prefer one import per line when editing nearby code.
+  - Standard library first, then third-party (e.g., `Bio`, `numpy`), then local.
+- **Naming**: Functions and variables in `snake_case`.
+- **Types**: Add type hints only if the file already uses them; avoid type-suppression tricks.
+- **CLI**: Preserve existing CLI shape (`sys.argv`, custom `help()`); don’t redesign argument parsing unless requested.
 
 ### 2.4. R (`*.R`)
-- Follow existing style in the file (spacing, pipe usage, etc.).
-- Keep assignments consistent (`<-` vs `=`) with the current file.
-- Use `library()` or `require()` according to existing patterns.
+Observed: functions use `fn_*` naming and `<-` assignment.
+
+- Keep assignment style consistent (`<-`).
+- Prefer explicit namespace calls (`biomaRt::useMart`) as in existing scripts.
+- Do not introduce new tidyverse piping unless already used in-file.
 
 ### 2.5. Perl (`*.pl`)
-- Respect existing formatting and use of `strict`/`warnings`.
-- Do not alter encoding or line endings.
+Observed: some scripts use `use strict;` and are vendor/NCBI-derived.
 
-### 2.6. Imports and Dependencies
-- Keep imports grouped by type where applicable (standard library → external → local).
-- Do not add unused imports.
-- If a file is a standalone script, keep dependencies minimal and self-contained.
+- Respect upstream formatting and comments (especially license/public domain blocks).
+- Avoid refactors; make the smallest fix.
+- Keep `use strict;`/warnings consistent with the file.
+
+### 2.6. AppleScript (`*.applescript`, `*.scpt`)
+- Preserve existing CLI/argument parsing patterns.
+- Avoid UI/activation changes unless explicitly requested.
 
 ### 2.7. Error Handling
-- Shell: check command exit codes when adding new calls.
-- Python/R/Perl: add explicit error handling only if the file already uses it or if failure is likely.
-- Avoid empty `catch`/`except` blocks.
+- Never add empty catch blocks.
+- Prefer explicit exit codes for CLI scripts.
+- When adding new external commands, check exit status if failure would be confusing/dangerous.
 
 ---
 
 ## 3. Repository Structure Notes
 
-- This is a script repository containing a mix of shell, Python, R, Perl, and AppleScript utilities.
-- No centralized build or test system is present.
-- Avoid broad refactors; treat each script as a standalone artifact.
+- Top-level contains most scripts.
+- Subdirs exist (e.g., `ncbi-script/`, `slurm-submit-jobs/`). Treat each as its own mini-toolbox.
 
 ---
 
@@ -88,40 +116,17 @@ If you run any verification command and it fails:
 ## 5. Agent Safety and Workflow
 
 - **Read before edit**: Always read a file before modifying it.
-- **Absolute paths**: Use absolute paths rooted at `/Users/liuc9/github/useful-scripts/`.
+- **Absolute paths**: Use absolute paths rooted at `/Users/liuc9/github/useful-scripts/` when using tools.
 - **No commits**: Do not commit or push unless explicitly requested.
-- **No docs creation**: Do not create new docs unless asked (this file is an exception).
-- **No assumptions**: If a command or tool is not present in the repo, do not assume it exists.
+- **No new docs**: Do not create new documentation unless asked (this file is an exception).
+- **No assumptions**: If a tool/config is not present, don’t claim it exists.
 
 ---
 
-## 6. Practical Defaults When Conventions Are Missing
+## 6. When to Ask for Clarification
 
-Use these only if the file offers no clear guidance:
-- Indentation: 2 spaces for new code blocks.
-- Line length: keep under 120 characters when feasible.
-- Naming: `snake_case` for shell and Python functions; `camelCase` only if the file already uses it.
-- Comments: keep concise and aligned with existing comment style.
-
----
-
-## 7. When to Ask for Clarification
-
-Ask the user before:
-- Introducing a new dependency or tool.
-- Reformatting large sections of a file.
-- Changing execution behavior of scripts (flags, defaults, output format).
-- Adding a test or build system not currently present.
-
----
-
-## 8. Examples of Safe Verification (Optional)
-
-Use only with user approval and only if tools are installed:
-- `bash <script>` with safe input and no destructive side effects.
-- `python <script>.py --help` to validate CLI usage.
-- `Rscript <script>.R` when the script is safe to run.
-
----
-
-(Approx. 150 lines to match the requested length.)
+Ask before:
+- Adding dependencies (pip/CRAN/CPAN/npm/brew).
+- Changing script outputs, flags, or defaults.
+- Making portability-breaking changes (Linux-only vs macOS behavior).
+- Adding a new test harness to the repo.
