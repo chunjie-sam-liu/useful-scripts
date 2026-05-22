@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-#BSUB -J vsc-tunnel
+#BSUB -J jrocker
 #BSUB -n 20
 #BSUB -R "rusage[mem=5000] span[hosts=1]"
-#BSUB -M 5000
-#BSUB -W 1080:00
+#BSUB -M 100000
+#BSUB -W 336:00
 #BSUB -q priority
-#BSUB -o /home/cliu68/tmp/errout/vsc-tunnel/vsc-tunnel-cpu.out.%J
-#BSUB -e /home/cliu68/tmp/errout/vsc-tunnel/vsc-tunnel-cpu.err.%J
+#BSUB -o /home/cliu68/tmp/errout/jrocker/vsc-tunnel-cpu.out.%J
+#BSUB -e /home/cliu68/tmp/errout/jrocker/vsc-tunnel-cpu.err.%J
 # customize -o/-e path as appropriate (to a directory readable only by the user!)
 
 genv() {
@@ -18,28 +18,35 @@ renv() {
 }
 
 # genv
-renv
+# renv
 
 unset NODE_PATH
 unset NODE_OPTIONS
 
 export TMPDIR=$HOME/tmp
-TYPE=CPU
-TEMPDIR=${HOME}/tmp/errout/vsc-tunnel
-MACHINENAME=$(uuidgen | cut -d"-" -f1)
 
-MACHINENAME_TYPE=${TYPE}_${MACHINENAME}
-DATADIR=${TEMPDIR}/${MACHINENAME_TYPE}
+COMPUTE_NODE=$(hostname)
 
-echo $MACHINENAME_TYPE
-echo $DATADIR
-mkdir -p "$TMPDIR" "$TEMPDIR"
+echo "========================================"
+echo "LSF Job ID:     ${LSB_JOBID}"
+echo "Compute Node:   ${COMPUTE_NODE}"
+echo "User:           $(whoami)"
+echo "Date:           $(date)"
+echo "========================================"
+echo ""
+echo "Add the following to your local ~/.ssh/config:"
+echo ""
+echo "Host ${COMPUTE_NODE}"
+echo "    HostName ${COMPUTE_NODE}"
+echo "    User $(whoami)"
+echo "    ProxyJump stjude"
+echo ""
+echo "========================================"
+echo "Then connect with: code --remote ssh-remote+${COMPUTE_NODE} /home/$(whoami)"
+echo "========================================"
 
-CODE_CLI=${HOME}/tools/vscode-cli/code
-
-${CODE_CLI} tunnel user login --provider github &&
-  ${CODE_CLI} tunnel \
-    --no-sleep \
-    --name ${MACHINENAME_TYPE} \
-    --accept-server-license-terms \
-    --cli-data-dir ${DATADIR}
+# Keep job alive — periodic light activity to maintain resource usage
+while true; do
+    find "$HOME" -maxdepth 1 -name '.bashrc' -newer /dev/null > /dev/null 2>&1
+    sleep $((RANDOM % 120 + 180))
+done
