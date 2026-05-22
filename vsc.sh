@@ -215,7 +215,7 @@ cmd_clean() {
 }
 
 write_ssh_conf() {
-    # Writes SSH config for current parsed job to a file and prints the path
+    # Writes SSH config (same as ssh command output) to a file
     if [[ -z "$P_HOST" || "$P_HOST" == "-" ]]; then
         echo "# Job $P_JOBID — pending (no host yet), skipped"
         return
@@ -225,11 +225,7 @@ write_ssh_conf() {
     host=$(extract_host "$P_HOST")
     local conf_file="${CONF_DIR}/${host}-${P_JOBID}.conf"
 
-    {
-        echo "# Job $P_JOBID | started $P_START"
-        print_ssh_config "$P_JOBID" "$host"
-        echo "# code --remote ssh-remote+${host} /home/${USER}"
-    } > "$conf_file"
+    print_ssh_block > "$conf_file"
 
     echo "$conf_file"
 }
