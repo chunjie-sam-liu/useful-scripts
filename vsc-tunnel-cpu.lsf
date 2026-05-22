@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=vsc-tunnel
-#SBATCH --signal=USR2
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=20
-#SBATCH --mem=100G
-#SBATCH --time=1080:00:00
-#SBATCH --output=/home/%u/tmp/errout/jrocker/vsc-tunnel-cpu.job.%j
-# customize --output path as appropriate (to a directory readable only by the user!)
+#BSUB -J vsc-tunnel
+#BSUB -n 20
+#BSUB -R "rusage[mem=5000] span[hosts=1]"
+#BSUB -M 5000
+#BSUB -W 1080:00
+#BSUB -q priority
+#BSUB -o /home/cliu68/tmp/errout/vsc-tunnel/vsc-tunnel-cpu.out.%J
+#BSUB -e /home/cliu68/tmp/errout/vsc-tunnel/vsc-tunnel-cpu.err.%J
+# customize -o/-e path as appropriate (to a directory readable only by the user!)
 
 genv() {
     eval "$(pixi shell-hook --manifest-path ~/github/genv/pixi.toml)"
@@ -32,9 +33,12 @@ DATADIR=${TEMPDIR}/${MACHINENAME_TYPE}
 
 echo $MACHINENAME_TYPE
 echo $DATADIR
+mkdir -p "$TMPDIR" "$TEMPDIR"
 
-code tunnel user login --provider github &&
-  code tunnel \
+CODE_CLI=${HOME}/tools/vscode-cli/code
+
+${CODE_CLI} tunnel user login --provider github &&
+  ${CODE_CLI} tunnel \
     --no-sleep \
     --name ${MACHINENAME_TYPE} \
     --accept-server-license-terms \
