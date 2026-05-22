@@ -10,6 +10,8 @@
 #   vsc-lsf.sh cancel all          Cancel all jrocker jobs
 #   vsc-lsf.sh clean               Remove all log/err files
 #   vsc-lsf.sh clean <JOBID>       Remove log/err files for a specific job
+#   vsc-lsf.sh conf                Export SSH config file(s) to ~/tmp for all running jobs
+#   vsc-lsf.sh conf <JOBID>        Export SSH config file for a specific job
 #   vsc-lsf.sh help                Show this help
 
 set -euo pipefail
@@ -21,9 +23,10 @@ USER=$(whoami)
 
 LOG_DIR="/home/cliu68/tmp/errout/jrocker"
 LOG_PREFIX="vsc-tunnel-cpu"
+CONF_DIR="${HOME}/tmp"
 
 usage() {
-    sed -n '3,13p' "${BASH_SOURCE[0]}" | sed 's/^# \?//'
+    sed -n '3,15p' "${BASH_SOURCE[0]}" | sed 's/^# \?//'
 }
 
 # --- helpers ---
@@ -211,6 +214,62 @@ cmd_clean() {
     fi
 }
 
+write_ssh_conf() {
+    # Writes SSH config for current parsed job to a file and prints the path
+    if [[ -z "$P_HOST" || "$P_HOST" == "-" ]]; then
+        echo "# Job $P_JOBID — pending (no host yet), skipped"
+        return
+    fi
+
+    local host
+    host=$(extract_host "$P_HOST")
+    local conf_file="${CONF_DIR}/${host}-${P_JOBID}.conf"
+
+    {
+        echo "# Job $P_JOBID | started $P_START"
+        print_ssh_config "$P_JOBID" "$host"
+        echo "# code --remote ssh-remote+${host} /home/${USER}"
+    } > "$conf_file"
+
+    echo "$conf_file"
+}
+
+cmd_conf() {
+    mkdir -p "$CONF_DIR"
+    local target_jobid="${1:-}"
+
+    if [[ -n "$target_jobid" ]]; then
+        local info
+        info=$(get_job_info "$target_jobid")
+        if [[ -z "$info" ]]; then
+            echo "Error: Job $target_jobid not found." >&2
+            exit 1
+        fi
+        parse_job_line "$info"
+        if [[ "$P_STAT" != "RUN" ]]; then
+            echo "# Job $P_JOBID is $P_STAT (not running yet)"
+            return
+        fi
+        write_ssh_conf
+        return
+    fi
+
+    # All running jobs
+    local jobs
+    jobs=$(get_running_jobs)
+    if [[ -z "$jobs" ]]; then
+        echo "No running jrocker jobs found."
+        return
+    fi
+
+    while IFS= read -r line; do
+        parse_job_line "$line"
+        if [[ "$P_STAT" == "RUN" ]]; then
+            write_ssh_conf
+        fi
+    done <<< "$jobs"
+}
+
 # --- main ---
 
 cmd="${1:-help}"
@@ -222,6 +281,7 @@ case "$cmd" in
     ssh)        cmd_ssh "$@" ;;
     cancel|kill) cmd_cancel "$@" ;;
     clean)      cmd_clean "$@" ;;
+    conf)       cmd_conf "$@" ;;
     help|-h|--help) usage ;;
     *)
         echo "Unknown command: $cmd" >&2
