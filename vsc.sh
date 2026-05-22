@@ -14,7 +14,7 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 LSF_SCRIPT="${SCRIPT_DIR}/vsc-tunnel-cpu.lsf"
 JOB_NAME="jrocker"
 USER=$(whoami)
@@ -28,13 +28,25 @@ usage() {
 
 # --- helpers ---
 
+JOB_FMT="jobid stat exec_host nreq_slot run_time time_left start_time"
+JOB_DELIM="^"
+
 get_running_jobs() {
-    bjobs -o "jobid stat exec_host start_time" -noheader -J "$JOB_NAME" 2>/dev/null || true
+    bjobs -o "${JOB_FMT} delimiter='${JOB_DELIM}'" -noheader -J "$JOB_NAME" 2>/dev/null || true
 }
 
 get_job_info() {
     local jobid="$1"
-    bjobs -o "jobid stat exec_host start_time" -noheader "$jobid" 2>/dev/null || true
+    bjobs -o "${JOB_FMT} delimiter='${JOB_DELIM}'" -noheader "$jobid" 2>/dev/null || true
+}
+
+parse_job_line() {
+    # Parse a caret-delimited job line into variables
+    local line="$1"
+    IFS='^' read -r P_JOBID P_STAT P_HOST P_CPUS P_RUNTIME P_TIMELEFT P_START <<< "$line"
+    # Extract per-slot rusage mem from bjobs -l
+    P_SLOT_MEM=$(bjobs -l "$P_JOBID" 2>/dev/null | grep -o 'rusage\[mem=[0-9.]*\]' | head -1 | grep -o '[0-9.]*')
+    P_SLOT_MEM="${P_SLOT_MEM%%.*}"  # strip decimal
 }
 
 extract_host() {
@@ -53,21 +65,26 @@ print_ssh_config() {
 }
 
 print_ssh_block() {
-    local jobid="$1"
-    local raw_host="$2"
-    local start_time="$3"
+    # Uses P_JOBID P_STAT P_HOST P_CPUS P_MEM P_RUNTIME P_TIMELEFT P_START
 
-    if [[ -z "$raw_host" || "$raw_host" == "-" ]]; then
-        echo "# Job $jobid — pending (no host yet)"
+    if [[ -z "$P_HOST" || "$P_HOST" == "-" ]]; then
+        echo "# Job $P_JOBID — pending (no host yet)"
         echo ""
         return
     fi
 
     local host
-    host=$(extract_host "$raw_host")
+    host=$(extract_host "$P_HOST")
 
-    echo "# --- Job $jobid | started $start_time ---"
-    print_ssh_config "$jobid" "$host"
+    echo "# --- Job $P_JOBID | started $P_START ---"
+    # Calculate total memory: per-slot rusage × CPUs
+    local total_mem="${P_SLOT_MEM:-?} MB/slot"
+    if [[ "${P_SLOT_MEM:-}" =~ ^[0-9]+$ && "$P_CPUS" =~ ^[0-9]+$ ]]; then
+        local total_gb=$(( P_SLOT_MEM * P_CPUS / 1000 ))
+        total_mem="${total_gb} GB (${P_SLOT_MEM} MB/slot × ${P_CPUS})"
+    fi
+    echo "# CPUs: $P_CPUS | Mem: ${total_mem} | Running: $P_RUNTIME | Left: $P_TIMELEFT"
+    print_ssh_config "$P_JOBID" "$host"
     echo "# code --remote ssh-remote+${host} /home/${USER}"
     echo ""
 }
@@ -104,13 +121,12 @@ cmd_ssh() {
             echo "Error: Job $target_jobid not found." >&2
             exit 1
         fi
-        local jobid stat raw_host start_time
-        read -r jobid stat raw_host start_time <<< "$info"
-        if [[ "$stat" != "RUN" ]]; then
-            echo "# Job $jobid is $stat (not running yet)"
+        parse_job_line "$info"
+        if [[ "$P_STAT" != "RUN" ]]; then
+            echo "# Job $P_JOBID is $P_STAT (not running yet)"
             return
         fi
-        print_ssh_block "$jobid" "$raw_host" "$start_time"
+        print_ssh_block
         return
     fi
 
@@ -124,10 +140,9 @@ cmd_ssh() {
 
     local count=0
     while IFS= read -r line; do
-        local jobid stat raw_host start_time
-        read -r jobid stat raw_host start_time <<< "$line"
-        if [[ "$stat" == "RUN" ]]; then
-            print_ssh_block "$jobid" "$raw_host" "$start_time"
+        parse_job_line "$line"
+        if [[ "$P_STAT" == "RUN" ]]; then
+            print_ssh_block
             ((count++))
         fi
     done <<< "$jobs"
