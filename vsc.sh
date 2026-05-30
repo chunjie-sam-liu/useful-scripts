@@ -86,7 +86,13 @@ print_ssh_block() {
         local total_gb=$(( P_SLOT_MEM * P_CPUS / 1000 ))
         total_mem="${total_gb} GB (${P_SLOT_MEM} MB/slot × ${P_CPUS})"
     fi
-    echo "# CPUs: $P_CPUS | Mem: ${total_mem} | Running: $P_RUNTIME | Left: $P_TIMELEFT"
+    # Convert running time from "NNN second(s)" to HH:MM
+    local runtime_fmt="$P_RUNTIME"
+    if [[ "$P_RUNTIME" =~ ^([0-9]+)\ second ]]; then
+        local secs="${BASH_REMATCH[1]}"
+        runtime_fmt="$(( secs / 3600 )):$(printf '%02d' $(( (secs % 3600) / 60 )))"
+    fi
+    echo "# CPUs: $P_CPUS | Mem: ${total_mem} | Running: $runtime_fmt | Left: $P_TIMELEFT"
     print_ssh_config "$P_JOBID" "$host"
     echo "# code --remote ssh-remote+${host} /home/${USER}"
     echo ""
