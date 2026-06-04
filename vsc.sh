@@ -2,7 +2,7 @@
 # vsc-lsf.sh - Manage LSF jobs for VS Code Remote-SSH compute nodes.
 #
 # Usage:
-#   vsc-lsf.sh submit              Submit a new job (vsc-tunnel-cpu.lsf)
+#   vsc-lsf.sh submit              Submit a new job (vsc-cpu.lsf)
 #   vsc-lsf.sh ls                  List all jrocker jobs
 #   vsc-lsf.sh ssh                 Show SSH config for all running jobs
 #   vsc-lsf.sh ssh <JOBID>         Show SSH config for a specific job
@@ -17,7 +17,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
-LSF_SCRIPT="${SCRIPT_DIR}/vsc-tunnel-cpu.lsf"
+LSF_SCRIPT="${SCRIPT_DIR}/vsc-cpu.lsf"
 JOB_NAME="jrocker"
 USER=$(whoami)
 
