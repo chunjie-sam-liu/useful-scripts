@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-#BSUB -J interactive-vsc-hpc
+#BSUB -J jrocker
 #BSUB -n 10
 #BSUB -R "rusage[mem=5000] span[hosts=1]"
 #BSUB -M 50000
 #BSUB -W 336:00
 #BSUB -q priority
-#BSUB -o /home/cliu68/tmp/errout/interactive-vsc-hpc/vsc-tunnel-cpu.out.%J
-#BSUB -e /home/cliu68/tmp/errout/interactive-vsc-hpc/vsc-tunnel-cpu.err.%J
+#BSUB -o /home/cliu68/tmp/errout/jrocker/vsc-tunnel-cpu.out.%J
+#BSUB -e /home/cliu68/tmp/errout/jrocker/vsc-tunnel-cpu.err.%J
 # customize -o/-e path as appropriate (to a directory readable only by the user!)
 
 

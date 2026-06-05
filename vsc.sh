@@ -152,7 +152,7 @@ cmd_ssh() {
         parse_job_line "$line"
         if [[ "$P_STAT" == "RUN" ]]; then
             print_ssh_block
-            ((count++))
+            (( ++count ))
         fi
     done <<< "$jobs"
 
