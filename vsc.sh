@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
-# vsc-lsf.sh - Manage LSF jobs for VS Code Remote-SSH compute nodes.
+# vsc.sh - Manage LSF jobs for VS Code Remote-SSH compute nodes.
 #
 # Usage:
-#   vsc-lsf.sh submit              Submit a new job (vsc-cpu.lsf)
-#   vsc-lsf.sh ls                  List all jrocker jobs
-#   vsc-lsf.sh ssh                 Show SSH config for all running jobs
-#   vsc-lsf.sh ssh <JOBID>         Show SSH config for a specific job
-#   vsc-lsf.sh cancel <JOBID>      Cancel a specific job
-#   vsc-lsf.sh cancel all          Cancel all jrocker jobs
-#   vsc-lsf.sh clean               Remove all log/err files
-#   vsc-lsf.sh clean <JOBID>       Remove log/err files for a specific job
-#   vsc-lsf.sh conf                Export SSH config file(s) to ~/tmp for all running jobs
-#   vsc-lsf.sh conf <JOBID>        Export SSH config file for a specific job
-#   vsc-lsf.sh help                Show this help
+#   vsc.sh submit              Submit a new job (vsc-cpu.lsf)
+#   vsc.sh ls                  List all jrocker jobs
+#   vsc.sh ssh                 Show SSH config for all running jobs
+#   vsc.sh ssh <JOBID>         Show SSH config for a specific job
+#   vsc.sh cancel <JOBID>      Cancel a specific job
+#   vsc.sh cancel all          Cancel all jrocker jobs
+#   vsc.sh clean               Remove stale log/err/conf files (jobs no longer active)
+#   vsc.sh clean <JOBID>       Remove log/err/conf files for a specific job
+#   vsc.sh conf                Export SSH config file(s) to ~/tmp for all running jobs
+#   vsc.sh conf <JOBID>        Export SSH config file for a specific job
+#   vsc.sh help                Show this help
 
 set -euo pipefail
 
@@ -164,7 +164,7 @@ cmd_ssh() {
 cmd_cancel() {
     local target="${1:-}"
     if [[ -z "$target" ]]; then
-        echo "Usage: vsc-lsf.sh cancel <JOBID|all>" >&2
+        echo "Usage: vsc.sh cancel <JOBID|all>" >&2
         exit 1
     fi
 
@@ -200,23 +200,48 @@ cmd_clean() {
                 found=1
             fi
         done
+        local conf_file
+        conf_file=$(find "$CONF_DIR" -maxdepth 1 -name "*-${target}.conf" 2>/dev/null | head -1 || true)
+        if [[ -n "$conf_file" ]]; then
+            rm "$conf_file"
+            echo "Removed $conf_file"
+            found=1
+        fi
         if [[ $found -eq 0 ]]; then
-            echo "No log files found for job $target"
+            echo "No files found for job $target"
         fi
     else
-        local files
-        files=$(find "$LOG_DIR" -name "${LOG_PREFIX}.out.*" -o -name "${LOG_PREFIX}.err.*" 2>/dev/null || true)
-        if [[ -z "$files" ]]; then
-            echo "No log files found in $LOG_DIR"
-            return
+        # Get all active job IDs (PEND + RUN)
+        local active_jobids
+        active_jobids=$(bjobs -o "jobid" -noheader -J "$JOB_NAME" 2>/dev/null | tr -d ' ' || true)
+
+        local removed=0
+
+        # Remove log/err files for jobs no longer active
+        while IFS= read -r f; do
+            local jobid="${f##*.}"
+            if ! grep -qx "$jobid" <<< "$active_jobids" 2>/dev/null; then
+                rm "$f"
+                echo "Removed $(basename "$f")"
+                removed=$(( removed + 1 ))
+            fi
+        done < <(find "$LOG_DIR" -maxdepth 1 \( -name "${LOG_PREFIX}.out.*" -o -name "${LOG_PREFIX}.err.*" \) 2>/dev/null)
+
+        # Remove conf files for jobs no longer active
+        while IFS= read -r f; do
+            local fname
+            fname=$(basename "$f" .conf)
+            local jobid="${fname##*-}"
+            if ! grep -qx "$jobid" <<< "$active_jobids" 2>/dev/null; then
+                rm "$f"
+                echo "Removed $f"
+                removed=$(( removed + 1 ))
+            fi
+        done < <(find "$CONF_DIR" -maxdepth 1 -name "*-*.conf" 2>/dev/null)
+
+        if [[ $removed -eq 0 ]]; then
+            echo "No stale files found."
         fi
-        local count
-        count=$(echo "$files" | wc -l)
-        echo "Removing $count log file(s) from $LOG_DIR"
-        echo "$files" | while IFS= read -r f; do
-            rm "$f"
-            echo "  Removed $(basename "$f")"
-        done
     fi
 }
 
