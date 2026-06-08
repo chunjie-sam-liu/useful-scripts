@@ -23,7 +23,7 @@ USER=$(whoami)
 
 LOG_DIR="/home/cliu68/tmp/errout/jrocker"
 LOG_PREFIX="vsc-tunnel-cpu"
-CONF_DIR="${HOME}/tmp"
+CONF_DIR="${HOME}/github/dotfiles/macos/.ssh/config.d"
 
 usage() {
     sed -n '3,15p' "${BASH_SOURCE[0]}" | sed 's/^# \?//'
@@ -183,6 +183,7 @@ cmd_cancel() {
     else
         echo "  bkill $target"
         bkill "$target"
+        cmd_clean "$target"
     fi
 }
 
