@@ -257,6 +257,11 @@ write_ssh_conf() {
     host=$(extract_host "$P_HOST")
     local conf_file="${CONF_DIR}/${host}-${P_JOBID}.conf"
 
+    if [[ -f "$conf_file" ]]; then
+        echo "Skipped (already exists): $conf_file"
+        return
+    fi
+
     print_ssh_block > "$conf_file"
 
     echo "$conf_file"
